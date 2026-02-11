@@ -1,5 +1,5 @@
-// Layout.jsx
 import { useState } from "react";
+import { Outlet } from "react-router-dom";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 
@@ -11,11 +11,11 @@ export default function Layout() {
       <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
 
       <div className="flex flex-col flex-1">
-        <Header isOpen={isOpen} setIsOpen={setIsOpen} />
+        <Header setIsOpen={setIsOpen} />
 
-        <main className="flex-1 p-6 overflow-y-auto">
-          <div className="bg-white rounded-xl shadow p-6">
-            Dashboard Content
+        <main className="flex-1 p-3 bg-white overflow-y-auto">
+          <div className="bg-white rounded-xl shadow p-2">
+            <Outlet />
           </div>
         </main>
       </div>
