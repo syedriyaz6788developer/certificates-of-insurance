@@ -13,8 +13,8 @@ export default function Layout() {
       <div className="flex flex-col flex-1">
         <Header setIsOpen={setIsOpen} />
 
-        <main className="flex-1 p-3 bg-white overflow-y-auto">
-          <div className="bg-white rounded-xl shadow p-2">
+        <main className="flex-1 p-2 bg-white overflow-y-auto">
+          <div className="bg-white rounded-xl  p-2">
             <Outlet />
           </div>
         </main>

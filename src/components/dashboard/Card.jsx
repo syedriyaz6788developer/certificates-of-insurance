@@ -8,7 +8,7 @@ export default function Card({
 }) {
   return (
     <div
-      className="rounded-2xl p-4 shadow-sm w-full"
+      className="rounded-2xl p-4 shadow w-full"
       style={{ backgroundColor: color }}
     >
       <h4 className="text-gray-600 text-sm font-medium mb-3">

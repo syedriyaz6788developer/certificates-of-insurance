@@ -1,9 +1,11 @@
 import React from "react";
 import Card from "../components/dashboard/Card";
+import Table from "../components/dashboard/Table";
 
 export default function COIDashboard() {
   return (
-    <div className="p-4">
+    <div>
+        <div className="p-2">
       <div className="
         grid 
         grid-cols-1 
@@ -38,6 +40,11 @@ export default function COIDashboard() {
           color="#FEEEEA"
           icon="/icons/card4.svg"
         />
+      </div>
+      
+    </div>
+    <div className="py-3">
+        <Table/>
       </div>
     </div>
   );
