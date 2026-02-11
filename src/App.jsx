@@ -1,4 +1,7 @@
+// App.jsx
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Provider } from "react-redux";
+import { store } from "./store/store";
 import Layout from "./components/Layout";
 import COIDashboard from "./pages/COIDashboard";
 import ContractVault from "./pages/ContractVault";
@@ -8,19 +11,19 @@ import { Toaster } from "react-hot-toast";
 
 export default function App() {
   return (
-    <BrowserRouter>
-     <Toaster position="top-right" />
-      <Routes>
-        <Route path="/" element={<Layout />}>
-        
-          <Route index element={<Navigate to="/coi" replace />} />
-
-          <Route path="coi-dashboard" element={<COIDashboard />} />
-          <Route path="contracts" element={<ContractVault />} />
-          <Route path="analysis" element={<AnalysisResult />} />
-          <Route path="settings" element={<Settings />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <Provider store={store}>
+      <BrowserRouter>
+        <Toaster position="top-right" />
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Navigate to="/coi-dashboard" replace />} />
+            <Route path="coi-dashboard" element={<COIDashboard />} />
+            <Route path="contracts" element={<ContractVault />} />
+            <Route path="analysis" element={<AnalysisResult />} />
+            <Route path="settings" element={<Settings />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </Provider>
   );
 }

@@ -62,10 +62,10 @@ export default function Sidebar({ isOpen, setIsOpen }) {
 
         {/* Review Button */}
         <button
-          className={`flex items-center gap-2 p-3 px-5 rounded-lg bg-[#4A88EE] text-white transition
+          className={`flex items-center gap-2 py-3 px-3 rounded-lg bg-[#4A88EE] text-white transition
           ${!isOpen && "justify-center"}`}
         >
-          {isOpen && <span>Review Documents</span>}
+          {isOpen && <span className="text-[14px]">Review Documents</span>}
           <Plus size={18} />
         </button>
 
@@ -89,7 +89,7 @@ function SidebarItem({ icon, label, path, isOpen }) {
     <NavLink
       to={path}
       className={({ isActive }) =>
-        `flex items-center gap-3 p-3 rounded-lg transition-all duration-200
+        `flex items-center text-[14px] gap-3 p-3 rounded-lg transition-all duration-200
         ${
           isActive
             ? "bg-[#E8F0FE] text-[#4A88EE] font-semibold"
