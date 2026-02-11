@@ -80,20 +80,20 @@ function ProfileDropdown({ name, email }) {
 
 /* --------------------------------- Header --------------------------------- */
 
-export default function Header({ setIsOpen }) {
+export default function Header() {
   return (
     <header className="bg-white shadow-sm border-b-2 px-4 md:px-6 py-3 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
       {/* LEFT SECTION */}
       <div className="flex items-start md:items-center gap-4">
-        <button
+        {/* <button
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
           className="md:hidden p-2 rounded hover:bg-gray-100"
           aria-label="Toggle sidebar"
         >
           <Menu size={20} />
-        </button>
+        </button> */}
 
         <div>
           <h2 className="font-bold text-lg md:text-[24px] leading-8 md:leading-[32px] text-[#4F5857]">

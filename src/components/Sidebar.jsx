@@ -34,25 +34,25 @@ export default function Sidebar({ isOpen, setIsOpen }) {
   return (
     <div
       className={`bg-[#F3F4F4] shadow-lg h-full transition-all duration-300 
-      ${isOpen ? "w-64" : "w-20"}`}
+      ${isOpen ? "w-56" : "w-20"}`}
     >
       {/* Logo + Toggle */}
-      <div className="flex items-center justify-between py-4 p-3 border-b">
+      <div className="flex items-center justify-between py-4 p-1 border-b">
         {isOpen && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 ">
             <img className="w-8" src="/Lshape.png" alt="Logo mark" />
-            <img src="/Logo.svg" alt="Logo" />
+            <img src="/Logo.svg" alt="Logo" className="" />
           </div>
         )}
 
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="rounded-full text-[#4A88EE] border border-[#4A88EE] p-1"
+          className="rounded-full text-[#4A88EE] border ml-4 border-[#4A88EE] p-1 "
         >
           {isOpen ? (
-            <ChevronLeft size={20} />
+           <ChevronLeft size={15} className="" />
           ) : (
-            <ChevronRight size={20} />
+            <ChevronRight size={15} />
           )}
         </button>
       </div>

@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import Select from "../globalReuseComponents/Select";
-import { Search, Settings, Plus } from "lucide-react";
+import { Search, Settings, Pencil, EllipsisVertical, Plus } from "lucide-react";
 import Pagination from "./Pagination";
+import toast from "react-hot-toast";
+import data from "../../data/coiData.json";
 
 export default function Table() {
   const [property, setProperty] = useState("");
@@ -9,19 +11,72 @@ export default function Table() {
   const [reminder, setReminder] = useState("");
   const [page, setPage] = useState(1);
   const [rows, setRows] = useState(10);
+
+  const [tableData, setTableData] = useState(() => {
+    if (!data || data.length === 0) {
+      toast.error("No COI data available");
+      return [];
+    }
+    return data;
+  });
+
+  // Status Options
+  const statusNotify = [
+    { label: "Active", value: "Active" },
+    { label: "Expired", value: "Expired" },
+    { label: "Rejected", value: "Rejected" },
+    { label: "Expiring", value: "Expiring" },
+    { label: "Not Processed", value: "Not Processed" },
+  ];
+
+  // Update Reminder Status
+  const handleReminderChange = (id, value) => {
+    try {
+      setTableData((prev) =>
+        prev.map((item) =>
+          item.id === id ? { ...item, reminderStatus: value } : item
+        )
+      );
+      toast.success("Reminder status updated");
+    } catch (error) {
+      toast.error("Failed to update reminder status");
+      console.error(error);
+    }
+  };
+
+  // Auto Reminder Label
+  const getReminderStatusLabel = (item) => {
+    if (!item.expiryDate) return "NA";
+
+    const today = new Date();
+    const expiry = new Date(item.expiryDate);
+    if (isNaN(expiry)) return "NA";
+
+    const diffTime = expiry - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays <= 0) return "NA";
+    if (diffDays <= 30) return `Sent (${diffDays}d)`;
+
+    return "Not Sent";
+  };
+
   return (
-    <div>
-      <div className="relative overflow-x-auto bg-neutral-primary-soft shadow rounded-md border border-default">
-        <div className="p-4 flex items-center justify-between gap-4">
-          {/* LEFT SIDE */}
-          <div className="flex items-center gap-3">
+    <div className="w-full">
+      <div className="relative bg-neutral-primary-soft shadow rounded-md border border-default overflow-hidden">
+
+        {/* ================= HEADER ================= */}
+        <div className="p-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+
+          {/* Filters */}
+          <div className="flex flex-col sm:flex-row flex-wrap gap-3 w-full lg:w-auto">
             <Select
               placeholder="All Properties"
               value={property}
               onChange={(e) => setProperty(e.target.value)}
               options={[
-                { label: "Property 1", value: "p1" },
-                { label: "Property 2", value: "p2" },
+                { label: "Property 1", value: "Property 1" },
+                { label: "Property 2", value: "Property 2" },
               ]}
             />
 
@@ -30,8 +85,8 @@ export default function Table() {
               value={status}
               onChange={(e) => setStatus(e.target.value)}
               options={[
-                { label: "Active", value: "active" },
-                { label: "Expired", value: "expired" },
+                { label: "Active", value: "Active" },
+                { label: "Expired", value: "Expired" },
               ]}
             />
 
@@ -40,146 +95,114 @@ export default function Table() {
               value={reminder}
               onChange={(e) => setReminder(e.target.value)}
               options={[
-                { label: "Sent", value: "sent" },
-                { label: "Pending", value: "pending" },
+                { label: "Sent", value: "Sent" },
+                { label: "Pending", value: "Pending" },
               ]}
             />
           </div>
 
-          {/* RIGHT SIDE */}
-          <div className="flex items-center gap-3">
-            {/* Search Bar */}
-            <div className="relative">
+          {/* Right Controls */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
+
+            {/* Search */}
+            <div className="relative w-full sm:w-64">
               <Search
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
                 size={18}
               />
               <input
                 type="text"
-                placeholder="Search by tenants, properties or units..."
-                className="pl-10 pr-4 py-2 border rounded-xl focus:outline-none  "
+                placeholder="Search..."
+                className="w-full pl-10 pr-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
-            {/* Settings Button */}
-            <button className="p-2 border rounded-xl hover:bg-gray-100 transition">
-              <Settings size={18} />
-            </button>
+            <div className="flex gap-3">
+              <button className="p-2 border rounded-xl hover:bg-gray-100 transition">
+                <Settings size={18} />
+              </button>
 
-            {/* Add New Button */}
-            <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition">
-              <Plus size={18} />
-              ADD COI
-            </button>
+              <button
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition whitespace-nowrap"
+                onClick={() => toast.success("Add COI clicked")}
+              >
+                <Plus size={18} />
+                ADD COI
+              </button>
+            </div>
           </div>
         </div>
 
-        <table className="w-full text-sm text-left rtl:text-right text-body">
-          <thead className="text-sm text-body bg-[#DCDEDE] border-b border-t border-default-medium">
-            <tr>
-              <th scope="col" className="p-4">
-                <div className="flex items-center">
-                  <input
-                    id="table-checkbox-20"
-                    type="checkbox"
-                    value=""
-                    className="w-4 h-4 border border-default-medium rounded-xs bg-neutral-secondary-medium focus:ring-2 focus:ring-brand-soft"
-                  />
-                  <label for="table-checkbox-20" className="sr-only">
-                    Table checkbox
-                  </label>
-                </div>
-              </th>
-              <th scope="col"   className="px-6 py-3  font-medium text-sm leading-6 text-[#666E6D] font-['Inter']">
-                Property
-              </th>
-              <th scope="col"   className="px-6 py-3 font-medium text-sm leading-6 text-[#666E6D] font-['Inter']">
-                Tenant Name
-              </th>
-              <th scope="col"   className="px-6 py-3 font-medium text-sm leading-6 text-[#666E6D] font-['Inter']">
-                Unit
-              </th>
-              <th scope="col"   className="px-6 py-3 font-medium text-sm leading-6 text-[#666E6D] font-['Inter']">
-                COI Name
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-sm font-medium "
-              >
-                <div className="flex items-center justify-between">
-                  <span className=" font-medium text-base leading-6 text-[#666E6D] font-['Inter']">Expiry Date</span>
+        {/* ================= TABLE ================= */}
+        <div className="overflow-x-auto">
+          <table className="min-w-[950px] w-full text-sm text-left">
+            <thead className="text-xs bg-[#DCDEDE] border-y">
+              <tr>
+                <th className="p-4">
+                  <input type="checkbox" />
+                </th>
+                <th className="px-6 py-3">Property</th>
+                <th className="px-6 py-3">Tenant Name</th>
+                <th className="px-6 py-3">Unit</th>
+                <th className="px-6 py-3">COI Name</th>
+                <th className="px-6 py-3">Expiry Date</th>
+                <th className="px-6 py-3">Status</th>
+                <th className="px-6 py-3">Reminder Status</th>
+                <th className="px-6 py-3">Actions</th>
+              </tr>
+            </thead>
 
-                  {/* Sort Icons */}
-                  <div className="flex flex-col ml-2">
-                    <svg
-                      className="w-4 h-4 text-gray-400"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M5 12l5-5 5 5H5z" />
-                    </svg>
-                    <svg
-                      className="w-4 h-4 text-gray-400 -mt-1"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M5 8l5 5 5-5H5z" />
-                    </svg>
-                  </div>
-                </div>
-              </th>
-
-              <th scope="col"  className="px-6 py-3 font-medium text-sm leading-6 text-[#666E6D] font-['Inter']">
-                Status
-              </th>
-              <th scope="col"  className="px-6 py-3 font-medium text-sm leading-6 text-[#666E6D] font-['Inter']">
-                Reminder status
-              </th>
-              <th scope="col"  className="px-6 py-3 font-medium text-sm leading-6 text-[#666E6D] font-['Inter']">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr className="bg-neutral-primary-soft border-b border-default hover:bg-neutral-secondary-medium">
-              <td className="w-4 p-4">
-                <div className="flex items-center">
-                  <input
-                    id="table-checkbox-21"
-                    type="checkbox"
-                    value=""
-                    className="w-4 h-4 border border-default-medium rounded-xs bg-neutral-secondary-medium focus:ring-2 focus:ring-brand-soft"
-                  />
-                  <label for="table-checkbox-21" className="sr-only">
-                    Table checkbox
-                  </label>
-                </div>
-              </td>
-              <th
-                scope="row"
-                className="px-6 py-4 font-medium text-heading whitespace-nowrap"
-              >
-                Apple MacBook Pro 17"
-              </th>
-              <td className="px-6 py-4">Silver</td>
-              <td className="px-6 py-4">Laptop</td>
-              <td className="px-6 py-4">$2999</td>
-              <td className="px-6 py-4">Silver</td>
-              <td className="px-6 py-4">Laptop</td>
-              <td className="px-6 py-4">$2999</td>
-              <td className="px-6 py-4">
-                <a
-                  href="#"
-                  className="font-medium text-fg-brand hover:underline"
+            <tbody>
+              {tableData.map((item) => (
+                <tr
+                  key={item.id}
+                  className="border-b hover:bg-gray-50 transition"
                 >
-                  Edit
-                </a>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                  <td className="p-4">
+                    <input type="checkbox" />
+                  </td>
 
-        <div className="py-2">
+                  <td className="px-6 py-4">{item.property}</td>
+                  <td className="px-6 py-4">{item.tenantName}</td>
+                  <td className="px-6 py-4">{item.unit}</td>
+                  <td className="px-6 py-4">{item.coiName}</td>
+
+                  {/* Expiry Date */}
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-2">
+                      {item.expiryDate}
+                      <Pencil size={14} className="cursor-pointer" />
+                    </div>
+                  </td>
+
+                  {/* Status Select */}
+                  <td className="px-6 py-4 w-52">
+                    <Select
+                      value={item.reminderStatus}
+                      onChange={(e) =>
+                        handleReminderChange(item.id, e.target.value)
+                      }
+                      options={statusNotify}
+                    />
+                  </td>
+
+                  {/* Reminder Label */}
+                  <td className="px-6 py-4">
+                    {getReminderStatusLabel(item)}
+                  </td>
+
+                  {/* Actions */}
+                  <td className="px-6 py-4">
+                    <EllipsisVertical className="cursor-pointer" />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* ================= PAGINATION ================= */}
+        <div className="py-3 px-4 flex justify-center sm:justify-between">
           <Pagination
             page={page}
             totalPages={52}
@@ -188,6 +211,7 @@ export default function Table() {
             onRowsChange={setRows}
           />
         </div>
+
       </div>
     </div>
   );
