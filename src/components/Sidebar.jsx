@@ -47,23 +47,23 @@ export default function Sidebar({ isOpen, setIsOpen }) {
 
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="rounded-full text-[#4A88EE] border ml-4 border-[#4A88EE] p-1 "
+          className="rounded-full text-[#4A88EE] border ml-5 mr-[15px] border-[#4A88EE] p-1 "
         >
           {isOpen ? (
-           <ChevronLeft size={15} className="" />
+           <ChevronLeft size={10} className="" />
           ) : (
-            <ChevronRight size={15} />
+            <ChevronRight size={10} className="" />
           )}
         </button>
       </div>
 
       {/* Menu */}
-      <nav className="mt-6 space-y-2 px-3">
+      <nav className="mt-6 space-y-2 pl-3">
 
         {/* Review Button */}
         <button
-          className={`flex items-center gap-2 py-3 px-3 rounded-lg bg-[#4A88EE] text-white transition
-          ${!isOpen && "justify-center"}`}
+          className={`flex items-center gap-2 py-3 px-5 rounded-lg bg-[#4A88EE] text-white transition
+          ${!isOpen && "justify-center px-4"}`}
         >
           {isOpen && <span className="text-[14px]">Review Documents</span>}
           <Plus size={18} />
@@ -95,7 +95,7 @@ function SidebarItem({ icon, label, path, isOpen }) {
             ? "bg-[#E8F0FE] text-[#4A88EE] font-semibold"
             : "text-gray-700 hover:bg-blue-50"
         }
-        ${!isOpen && "justify-center"}`
+        ${!isOpen && "justify-center mr-4"}`
       }
     >
       <img src={icon} alt={label} className="w-6 h-6" />

@@ -1,9 +1,13 @@
 // components/dashboard/COIDetailModal.jsx
 import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { X, Send, Trash2, Save } from "lucide-react";
 import Select from "../globalReuseComponents/Select";
+import { updateCOI, deleteCOI, updateReminderStatus } from "../../store/coiSlice";
+import toast from "react-hot-toast";
 
 export default function COIDetailModal({ isOpen, onClose, coi }) {
+  const dispatch = useDispatch();
   
   const [formData, setFormData] = useState({
     property: "",
@@ -40,7 +44,23 @@ useEffect(() => {
     { label: "Pending", value: "Pending" }
   ];
 
- 
+  const handleSave = () => {
+    dispatch(updateCOI({ id: coi.id, updatedData: formData }));
+    setIsEditing(false);
+  };
+
+  const handleDelete = () => {
+    if (window.confirm("Are you sure you want to delete this COI?")) {
+      dispatch(deleteCOI(coi.id));
+      onClose();
+    }
+  };
+
+  const handleSendReminder = () => {
+    toast.success(`Reminder sent to ${formData.tenantName}`);
+    dispatch(updateReminderStatus({ id: coi.id, status: "Sent" }));
+    setFormData({ ...formData, reminderStatus: "Sent" });
+  };
 
   if (!isOpen || !coi) return null;
 
@@ -206,8 +226,54 @@ useEffect(() => {
             </div>
           </div>
 
-          
-        
+          {/* Actions */}
+          <div className="flex justify-between pt-4 border-t">
+            <div className="flex gap-2">
+              <button
+                onClick={handleSendReminder}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+              >
+                <Send size={16} />
+                Send Reminder
+              </button>
+              
+              <button
+                onClick={handleDelete}
+                className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+              >
+                <Trash2 size={16} />
+                Delete
+              </button>
+            </div>
+
+            <div className="flex gap-2">
+              {isEditing ? (
+                <>
+                  <button
+                    onClick={() => setIsEditing(false)}
+                    className="px-4 py-2 border rounded-lg hover:bg-gray-50 transition"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSave}
+                    className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+                  >
+                    <Save size={16} />
+                    Save Changes
+                  </button>
+                </>
+              ) : (
+                <button
+                  
+                  className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition"
+                >
+                  
+                </button>
+              
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -1,4 +1,3 @@
-// store/coiSlice.js
 import { createSlice, createSelector } from '@reduxjs/toolkit';
 import toast from 'react-hot-toast';
 
@@ -77,7 +76,7 @@ const initialData = [
   }
 ];
 
-// Load from localStorage
+
 const loadInitialState = () => {
   try {
     const savedData = localStorage.getItem("coiData");
@@ -122,7 +121,7 @@ const coiSlice = createSlice({
   name: 'coi',
   initialState: loadInitialState(),
   reducers: {
-    // COI CRUD operations
+    
     addCOI: (state, action) => {
       const newCOI = {
         ...action.payload,
@@ -159,7 +158,6 @@ const coiSlice = createSlice({
       toast.success(`${action.payload.length} COI(s) deleted successfully`);
     },
 
-    // Selection management
     setSelectedRows: (state, action) => {
       state.selectedRows = action.payload;
     },
@@ -197,11 +195,9 @@ const coiSlice = createSlice({
       state.filters.searchTerm = action.payload;
       state.pagination.page = 1;
     },
-    // Add to your coiSlice.js
 sendReminder: (state, action) => {
   const { coiId, type, message } = action.payload;
-  // This would typically be an API call
-  // For now, we can update the reminder status in the state
+  
   const coi = state.cois.find(c => c.id === coiId);
   if (coi) {
     coi.reminderStatus = `Sent (${new Date().toLocaleDateString()})`;
@@ -231,7 +227,7 @@ sendReminder: (state, action) => {
       state.pagination.page = 1;
     },
 
-    // Bulk reminder
+    //------------------ Bulk reminder-------------------------
     sendBulkReminders: (state, action) => {
       const { ids, reminderType } = action.payload;
       reminderType
@@ -244,7 +240,7 @@ sendReminder: (state, action) => {
       toast.success(`Reminders sent to ${ids.length} recipient(s)`);
     },
 
-    // Update reminder status
+    // -----------------------Update reminder status---------------------------
     updateReminderStatus: (state, action) => {
       const { id, status } = action.payload;
       const index = state.coiData.findIndex(item => item.id === id);
@@ -256,7 +252,7 @@ sendReminder: (state, action) => {
   }
 });
 
-// Export actions
+
 export const {
   addCOI,
   updateCOI,
@@ -277,13 +273,13 @@ export const {
   updateReminderStatus
 } = coiSlice.actions;
 
-// Selectors
+
 export const selectAllCOIs = (state) => state.coi.coiData;
 export const selectSelectedRows = (state) => state.coi.selectedRows;
 export const selectFilters = (state) => state.coi.filters;
 export const selectPagination = (state) => state.coi.pagination;
 
-// Memoized selectors
+
 export const selectFilteredCOIs = createSelector(
   [selectAllCOIs, selectFilters],
   (coiData, filters) => {
