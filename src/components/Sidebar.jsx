@@ -1,4 +1,3 @@
-// Sidebar.jsx - Updated for mobile fixed positioning
 import { NavLink } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Plus, X } from "lucide-react";
 
@@ -143,7 +142,7 @@ export default function Sidebar({ isOpen, setIsOpen }) {
           <button
             className={`
     flex items-center gap-2 py-3 px-4 rounded-lg bg-[#4A88EE] text-[#F9FAFA]
-    hover:bg-[#3A78DE] transition w-full font-inter font-medium text-[14px] leading-[20px] tracking-[-0.6%] text-center
+    hover:bg-[#3A78DE] justify-between transition w-full font-inter font-medium text-[14px] leading-[20px] tracking-[-0.6%] text-center
     ${!isOpen && "justify-center px-2"}
   `}
           >

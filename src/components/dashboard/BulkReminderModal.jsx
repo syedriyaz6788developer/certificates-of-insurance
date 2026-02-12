@@ -1,4 +1,3 @@
-// components/dashboard/BulkReminderModal.jsx
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { X, Send } from "lucide-react";

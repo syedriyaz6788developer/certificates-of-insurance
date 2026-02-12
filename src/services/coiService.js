@@ -1,6 +1,5 @@
 import rawData from '../data/coiData.json';
 
-// Simulate API delay
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 class COIService {
@@ -9,10 +8,8 @@ class COIService {
     this.initializeStorage();
   }
 
-  // Initialize localStorage with JSON data if empty
   initializeStorage() {
     try {
-      // Check if data already exists in localStorage
       const existingCois = localStorage.getItem('coiData');
       const existingProperties = localStorage.getItem('coiProperties');
       
@@ -42,13 +39,11 @@ class COIService {
     }
   }
 
-  // Get all properties from JSON/localStorage
   async getProperties() {
     await delay(300);
     try {
       const properties = JSON.parse(localStorage.getItem('coiProperties') || '[]');
       
-      // If properties is empty, initialize from raw data
       if (!properties || properties.length === 0) {
         const transformedProperties = this.rawData.properties.map(prop => ({
           id: prop.id,
@@ -117,7 +112,6 @@ class COIService {
     try {
       const properties = await this.getProperties();
       
-      // Check if property already exists
       const exists = properties.some(p => 
         p.value === propertyData.value || 
         p.name === propertyData.name ||
@@ -157,7 +151,6 @@ class COIService {
       const properties = await this.getProperties();
       const cois = JSON.parse(localStorage.getItem('coiData') || '[]');
       
-      // Check if property is in use
       const isInUse = cois.some(coi => 
         coi.property === propertyValue || 
         coi.propertyId === propertyValue
@@ -188,16 +181,13 @@ class COIService {
     try {
       let cois = JSON.parse(localStorage.getItem('coiData') || '[]');
       
-      // If cois is empty, initialize from raw data
       if (!cois || cois.length === 0) {
         cois = this.rawData.cois;
         localStorage.setItem('coiData', JSON.stringify(cois));
       }
       
-      // Get properties for enrichment
       const properties = await this.getProperties();
       
-      // Enrich COIs with property details
       const enrichedCois = cois.map(coi => {
         const property = properties.find(p => 
           p.value === coi.property || 
@@ -280,7 +270,6 @@ class COIService {
       const index = cois.findIndex(coi => coi.id === id);
       
       if (index !== -1) {
-        // If property is updated, get new property details
         let property = null;
         if (updatedData.property && updatedData.property !== cois[index].property) {
           property = await this.getPropertyByName(updatedData.property);

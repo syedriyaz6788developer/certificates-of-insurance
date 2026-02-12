@@ -1,4 +1,3 @@
-// COIDashboard.jsx - Responsive version
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Card from "../components/dashboard/Card";
@@ -12,7 +11,6 @@ import { Loader2 } from "lucide-react";
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
-// Responsive Skeleton Card Component
 const SkeletonCard = () => (
   <div className="bg-white rounded-lg p-3 sm:p-4 shadow-sm">
     <div className="flex items-start justify-between">
@@ -46,7 +44,6 @@ export default function COIDashboard() {
     dispatch(fetchSummaryStats());
   }, [dispatch]);
 
-  // Also fetch stats when component becomes visible
   useEffect(() => {
     const handleFocus = () => {
       dispatch(fetchSummaryStats());
@@ -80,7 +77,7 @@ export default function COIDashboard() {
 
   return (
     <div className="px-2 sm:px-3 md:px-4">
-      <div className="p-2">
+      <div className="p-1">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
           <Card
             title="Total COI Processed"

@@ -1,4 +1,3 @@
-// App.jsx
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "./store/store";
@@ -22,8 +21,8 @@ export default function App() {
             <Route path="contracts" element={<ContractVault />} />
             <Route path="analysis" element={<AnalysisResult />} />
             <Route path="settings" element={<Settings />} />
-            <Route path="/notFound" element={<NotFound/>}/>
           </Route>
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </Provider>

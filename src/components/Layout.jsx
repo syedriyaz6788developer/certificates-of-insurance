@@ -55,7 +55,7 @@ export default function Layout() {
           isMobileView={isMobileView} 
         />
         
-        <main className="flex-1 overflow-y-auto overflow-x-hidden bg-gray-50">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden bg-white">
           <div className="container mx-auto p-1 sm:p-4 md:p-2">
             <div className="bg-white rounded-xl shadow-sm">
               <Outlet />

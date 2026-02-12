@@ -26,7 +26,6 @@ export default function COIDetailModal({ isOpen, onClose, coi }) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isMobileView, setIsMobileView] = useState(false);
 
-  // Check for mobile view
   useEffect(() => {
     const checkMobileView = () => {
       setIsMobileView(window.innerWidth < 640);
@@ -103,7 +102,6 @@ export default function COIDetailModal({ isOpen, onClose, coi }) {
     });
   };
 
-  // Mobile header with back button
   const MobileHeader = () => (
     <div className="flex items-center gap-3 p-4 border-b sticky top-0 bg-white">
       <button 
@@ -121,7 +119,6 @@ export default function COIDetailModal({ isOpen, onClose, coi }) {
     </div>
   );
 
-  // Desktop header with X button
   const DesktopHeader = () => (
     <div className="flex items-center justify-between p-6 border-b sticky top-0 bg-white">
       <div className="flex items-center gap-3">
@@ -139,7 +136,6 @@ export default function COIDetailModal({ isOpen, onClose, coi }) {
     </div>
   );
 
-  // Field component for consistent styling across all views
   const Field = ({ label,  isEditing: fieldEditing, value, onChange, type = 'text', options, isSelect = false }) => (
     <div className="space-y-1">
       <label className="text-xs font-medium text-gray-500 uppercase tracking-wider block">
@@ -181,13 +177,10 @@ export default function COIDetailModal({ isOpen, onClose, coi }) {
         ${isMobileView ? 'animate-slide-up' : 'animate-fade-in'}
       `}>
         
-        {/* Header - responsive */}
         {isMobileView ? <MobileHeader /> : <DesktopHeader />}
 
-        {/* Content */}
         <div className="p-4 sm:p-6 space-y-6">
           
-          {/* Form Fields - Responsive grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <Field
               label="Property"
@@ -252,10 +245,8 @@ export default function COIDetailModal({ isOpen, onClose, coi }) {
             />
           </div>
 
-          {/* Action Buttons - Responsive stack on mobile */}
           <div className="flex flex-col-reverse  sm:flex-row sm:items-center sm:justify-between pt-4 sm:pt-6 border-t gap-3 sm:gap-0">
             
-            {/* Left side actions - Stack vertically on mobile */}
             <div className="flex flex-col sm:flex-row  gap-2 sm:gap-3">
               <button
                 onClick={handleSendReminder}
@@ -290,7 +281,6 @@ export default function COIDetailModal({ isOpen, onClose, coi }) {
               </button>
             </div>
 
-            {/* Right side actions - Full width on mobile */}
             <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
               {isEditing ? (
                 <>
@@ -322,7 +312,6 @@ export default function COIDetailModal({ isOpen, onClose, coi }) {
         </div>
       </div>
 
-      {/* Add these styles to your global CSS or tailwind.config.js */}
       <style jsx>{`
         @keyframes slide-up {
           from {

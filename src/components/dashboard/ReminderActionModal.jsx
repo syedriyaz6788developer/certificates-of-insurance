@@ -1,4 +1,3 @@
-// components/dashboard/ReminderActionModal.jsx
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { X, Send, Calendar, User, Building, Mail, Clock } from "lucide-react";
@@ -19,7 +18,6 @@ export default function ReminderActionModal({ isOpen, onClose, coi }) {
     try {
       const now = new Date();
       
-      // Update the COI reminder status in Redux store
       dispatch(updateCOI({ 
         id: coi.id, 
         updatedData: { 
@@ -38,7 +36,6 @@ export default function ReminderActionModal({ isOpen, onClose, coi }) {
         } 
       }));
       
-      // Show success message with time
       toast.success(
         <div>
           <div className="font-medium">Reminder sent to {coi.tenantName}</div>
@@ -46,10 +43,8 @@ export default function ReminderActionModal({ isOpen, onClose, coi }) {
         </div>
       );
       
-      // Close modal immediately
       onClose();
       
-      // Reset form
       setMessage("");
       setReminderType("email");
       setIsSending(false);
@@ -105,7 +100,6 @@ export default function ReminderActionModal({ isOpen, onClose, coi }) {
 
   const daysUntilExpiry = getDaysUntilExpiry();
   
-  // Get last reminder info if exists
   const lastReminder = coi.reminderHistory?.[coi.reminderHistory.length - 1] || 
                       (coi.lastReminderSent ? { sentAt: coi.lastReminderSent, type: coi.reminderType } : null);
 
@@ -133,7 +127,6 @@ export default function ReminderActionModal({ isOpen, onClose, coi }) {
         {/* Content */}
         <div className="p-6 space-y-6">
           
-          {/* Last Reminder Info - Show if reminder was sent before */}
           {lastReminder && (
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start gap-3">
               <Clock size={16} className="text-blue-600 mt-0.5 flex-shrink-0" />
@@ -199,7 +192,6 @@ export default function ReminderActionModal({ isOpen, onClose, coi }) {
             </div>
           </div>
 
-          {/* Reminder Type Selection */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Reminder Type

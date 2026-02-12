@@ -47,14 +47,12 @@ export default function COIModal({ isOpen, onClose, coi, mode = 'add' }) {
   const [fileName, setFileName] = useState("");
   const [selectedPropertyDetails, setSelectedPropertyDetails] = useState(null);
 
-  // Fetch properties when modal opens
   useEffect(() => {
     if (isOpen) {
       dispatch(fetchProperties());
     }
   }, [isOpen, dispatch]);
 
-  // Initialize form with COI data when editing
   useEffect(() => {
     if (coi && mode === 'edit') {
       setFormData({
@@ -71,7 +69,6 @@ export default function COIModal({ isOpen, onClose, coi, mode = 'add' }) {
         notes: coi.notes || ""
       });
       
-      // Set selected property details if available
       if (coi.propertyDetails) {
         setSelectedPropertyDetails(coi.propertyDetails);
       } else if (coi.property) {
@@ -89,7 +86,6 @@ export default function COIModal({ isOpen, onClose, coi, mode = 'add' }) {
     setSearchTerm("");
   }, [coi, mode, isOpen, propertyOptions]);
 
-  // Update selected property details when property changes
   useEffect(() => {
     if (formData.property) {
       const property = propertyOptions.find(p => 
@@ -145,7 +141,6 @@ export default function COIModal({ isOpen, onClose, coi, mode = 'add' }) {
         updatedAt: new Date().toISOString()
       };
 
-      // Remove file from data as it needs special handling
       delete coiData.file;
 
       if (mode === 'edit' && coi) {
@@ -183,13 +178,11 @@ export default function COIModal({ isOpen, onClose, coi, mode = 'add' }) {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Check file size (max 10MB)
       if (file.size > 10 * 1024 * 1024) {
         toast.error("File size must be less than 10MB");
         return;
       }
       
-      // Check file type
       const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
       if (!allowedTypes.includes(file.type)) {
         toast.error("Only PDF, JPG and PNG files are allowed");
@@ -203,11 +196,9 @@ export default function COIModal({ isOpen, onClose, coi, mode = 'add' }) {
 
   const handlePropertyAdded = (newProperty) => {
     handleChange('property', newProperty.value);
-    // Refresh properties list
     dispatch(fetchProperties());
   };
 
-  // Filter property options based on search
   const filteredPropertyOptions = propertyOptions.filter(option =>
     option.label?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     option.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -241,17 +232,14 @@ export default function COIModal({ isOpen, onClose, coi, mode = 'add' }) {
           <form onSubmit={handleSubmit} className="p-6 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               
-              {/* Property with Search and Add Button */}
               <div className="space-y-1 md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700">
                   Property <span className="text-red-500">*</span>
                 </label>
                 <div className="space-y-3">
                   
-                  {/* Search input for properties */}
              
                   
-                  {/* Property selection */}
                   <div className="flex gap-2">
                     <div className="flex-1">
                       <Select
@@ -283,7 +271,6 @@ export default function COIModal({ isOpen, onClose, coi, mode = 'add' }) {
                   <p className="text-red-500 text-xs mt-1">{errors.property}</p>
                 )}
                 
-                {/* Show selected property details */}
                 {selectedPropertyDetails && (
                   <div className="mt-2 p-3 bg-blue-50 rounded-lg border border-blue-100">
                     <div className="flex items-start gap-2">
@@ -306,14 +293,12 @@ export default function COIModal({ isOpen, onClose, coi, mode = 'add' }) {
                   </div>
                 )}
                 
-                {/* Show property count */}
                 <p className="text-xs text-gray-500 mt-1">
                   {propertyOptions.length} properties available
                   {searchTerm && ` • Filtered from ${propertyOptions.length}`}
                 </p>
               </div>
 
-              {/* Tenant Name */}
               <div className="space-y-1">
                 <label className="block text-sm font-medium text-gray-700">
                   Tenant Name <span className="text-red-500">*</span>
@@ -333,7 +318,6 @@ export default function COIModal({ isOpen, onClose, coi, mode = 'add' }) {
                 )}
               </div>
 
-              {/* Tenant Email */}
               <div className="space-y-1">
                 <label className="block text-sm font-medium text-gray-700">
                   Tenant Email <span className="text-red-500">*</span>
@@ -426,7 +410,6 @@ export default function COIModal({ isOpen, onClose, coi, mode = 'add' }) {
                 />
               </div>
 
-              {/* File Upload */}
               <div className="space-y-1 md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700">
                   Upload COI {mode === 'add' ? '(Optional)' : '(Leave empty to keep current)'}
@@ -510,7 +493,6 @@ export default function COIModal({ isOpen, onClose, coi, mode = 'add' }) {
         </div>
       </div>
 
-      {/* Add Property Modal */}
       <AddPropertyModal
         isOpen={showAddPropertyModal}
         onClose={() => setShowAddPropertyModal(false)}

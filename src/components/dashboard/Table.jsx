@@ -839,7 +839,7 @@ export default function Table() {
       value={filters.property}
       onChange={(e) => dispatch(setPropertyFilter(e.target.value))}
       options={[{ label: "All Properties", value: "" }, ...propertyOptions]}
-      className="w-[140px] lg:w-[150px] font-inter-display font-normal text-[14px] leading-[20px] tracking-normal text-center text-[#2C3635]"
+      className="w-[140px] lg:w-[150px] font-inter-display font-normal text-[14px] leading-[20px] tracking-normal  text-[#2C3635]"
       disabled={loading}
     />
     <Select
@@ -847,7 +847,7 @@ export default function Table() {
       value={filters.status}
       onChange={(e) => dispatch(setStatusFilter(e.target.value))}
       options={[{ label: "All Status", value: "" }, ...STATUS_OPTIONS]}
-      className="w-[120px] lg:w-[130px] font-inter-display font-normal text-[14px] leading-[20px] tracking-normal text-center text-[#4F5857]"
+      className="w-[120px] lg:w-[130px] font-inter-display font-normal text-[14px] leading-[20px] tracking-normal  text-[#4F5857]"
       disabled={loading}
     />
     <Select
@@ -855,7 +855,7 @@ export default function Table() {
       value={filters.expiryFilter}
       onChange={(e) => dispatch(setExpiryFilter(e.target.value))}
       options={EXPIRY_FILTER_OPTIONS}
-      className="w-[140px] lg:w-[160px] font-inter-display font-normal text-[14px] leading-[20px] tracking-normal text-center text-[#4F5857]"
+      className="w-[140px] lg:w-[160px] font-inter-display font-normal text-[14px] leading-[20px] tracking-normal  text-[#4F5857]"
       disabled={loading}
     />
   </div>
@@ -1012,7 +1012,7 @@ export default function Table() {
             /* Desktop Table View */
             <div className="min-w-[1000px] lg:min-w-full overflow-x-auto">
               <table className="w-full text-sm text-left border-collapse table-fixed">
-                <thead className="text-xs bg-gray-50 border-y">
+                <thead className="text-xs bg-[#eff1f1] border-y">
                   <tr>
                     <th className="w-10 p-4">
                       <input 
@@ -1023,14 +1023,14 @@ export default function Table() {
                         className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-50"
                       />
                     </th>
-                    <th className="px-4 text-center py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] w-[120px]">Property</th>
-                    <th className="px-4 text-center py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] w-[120px]">Tenant Name</th>
-                    <th className="px-4 text-center py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] w-[120px]">Unit</th>
-                    <th className="px-4 text-center py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] w-[120px]">COI Name</th>
-                    <th className="px-4 text-center py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] w-[120px]">Expiry Date</th>
-                    <th className="px-4 text-center py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] w-[200px]">Status</th>
-                    <th className="px-4 text-center py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] w-[100px]">Reminder</th>
-                    <th className=" py-3 text-center  font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] ">Action</th>
+                    <th className="px-4  py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] w-[120px]">Property</th>
+                    <th className="px-4  py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] w-[120px]">Tenant Name</th>
+                    <th className="px-4  py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] w-[120px]">Unit</th>
+                    <th className="px-4  py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] w-[120px]">COI Name</th>
+                    <th className="px-4  py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] w-[120px]">Expiry Date</th>
+                    <th className="px-4  py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] w-[200px]">Status</th>
+                    <th className="px-4  py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] w-[140px]">Reminder status</th>
+                    <th className=" py-3   font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] ">Action</th>
                   </tr>
                 </thead>
 
@@ -1089,9 +1089,9 @@ export default function Table() {
                             </div>
                           </td>
 
-                          <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                          <td className="px-4 py-3 " onClick={(e) => e.stopPropagation()}>
                             {statusEditId === item.id ? (
-                              <div ref={statusSelectRef} className="relative z-20 w-[130px]">
+                              <div ref={statusSelectRef} className="relative z-20  w-[130px]">
                                 <Select
                                   value={item.status}
                                   onChange={(e) => handleStatusChange(e, item.id)}

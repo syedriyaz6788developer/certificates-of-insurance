@@ -65,7 +65,7 @@ export default function Pagination({
         </div>
       </div>
 
-      {/* Mobile View - Compact Single Row */}
+      
       <div className="flex md:hidden items-center justify-between w-full">
        
         <div className="flex items-center gap-1">
