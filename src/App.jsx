@@ -7,6 +7,7 @@ import COIDashboard from "./pages/COIDashboard";
 import ContractVault from "./pages/ContractVault";
 import AnalysisResult from "./pages/AnalysisResult";
 import Settings from "./pages/Settings";
+import NotFound from './pages/NotFound'
 import { Toaster } from "react-hot-toast";
 
 export default function App() {
@@ -21,6 +22,7 @@ export default function App() {
             <Route path="contracts" element={<ContractVault />} />
             <Route path="analysis" element={<AnalysisResult />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="/notFound" element={<NotFound/>}/>
           </Route>
         </Routes>
       </BrowserRouter>

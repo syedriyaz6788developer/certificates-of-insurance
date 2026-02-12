@@ -9,10 +9,10 @@ export default function Select({
   placeholder = "Select option",
   disabled = false,
   className = "",
-  name, // Added for form handling
-  required = false, // Added for form validation
-  error = "", // Added for error states
-  autoFocus = false, // Added for auto focus
+  name,
+  required = false, 
+  error = "",
+  autoFocus = false, 
 }) {
   const [open, setOpen] = useState(false);
 
@@ -55,7 +55,6 @@ export default function Select({
           ))}
         </select>
 
-        {/* Chevron Icon */}
         <ChevronDown
           size={16}
           className={`
@@ -67,7 +66,7 @@ export default function Select({
         />
       </div>
 
-      {/* Error Message */}
+  
       {error && (
         <p className="text-xs text-red-500 mt-1">{error}</p>
       )}

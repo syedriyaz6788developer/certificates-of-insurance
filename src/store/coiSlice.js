@@ -1,163 +1,233 @@
-import { createSlice, createSelector } from '@reduxjs/toolkit';
+import { createSlice, createSelector, createAsyncThunk } from '@reduxjs/toolkit';
+import COIService from '../services/coiService';
 import toast from 'react-hot-toast';
 
-const initialData = [
-  {
-    id: "1",
-    property: "Maplewood Shopping Center",
-    tenantName: "Johnson & Sons",
-    tenantEmail: "johnson@example.com",
-    unit: "101",
-    coiName: "Tenant_CedarHeights_COI_2026",
-    expiryDate: "2026-11-17",
-    status: "Active",
-    reminderStatus: "Not Sent",
-    createdAt: "2025-01-15T10:00:00Z"
-  },
-  {
-    id: "2",
-    property: "Oak Tree Tower",
-    tenantName: "Smith Enterprises",
-    tenantEmail: "smith@example.com",
-    unit: "Suite 300",
-    coiName: "GlobalMart_Insurance_COI_2025",
-    expiryDate: "2025-11-20",
-    status: "Expired",
-    reminderStatus: "Sent (30d)",
-    createdAt: "2024-12-10T10:00:00Z"
-  },
-  {
-    id: "3",
-    property: "Meadowbrook Plaza",
-    tenantName: "Global Solutions",
-    tenantEmail: "global@example.com",
-    unit: "B-12",
-    coiName: "UrbanOutfitters_COI_2027",
-    expiryDate: "2027-11-19",
-    status: "Rejected",
-    reminderStatus: "N/A",
-    createdAt: "2025-01-20T10:00:00Z"
-  },
-  {
-    id: "4",
-    property: "Pine Hill Shopping Center",
-    tenantName: "Patel Industries",
-    tenantEmail: "patel@example.com",
-    unit: "402",
-    coiName: "TechInnovators_COI_2028",
-    expiryDate: "2028-11-23",
-    status: "Expiring Soon",
-    reminderStatus: "Not Sent",
-    createdAt: "2025-02-01T10:00:00Z"
-  },
-  {
-    id: "5",
-    property: "Prestige",
-    tenantName: "John Doe",
-    tenantEmail: "john@example.com",
-    unit: "A-101",
-    coiName: "General Liability",
-    expiryDate: "2026-02-04",
-    status: "Active",
-    reminderStatus: "Sent",
-    createdAt: "2025-01-10T10:00:00Z"
-  },
-  {
-    id: "6",
-    property: "Sky properties",
-    tenantName: "Jane Smith",
-    tenantEmail: "jane@example.com",
-    unit: "B-202",
-    coiName: "Fire Insurance",
-    expiryDate: "2025-12-15",
-    status: "Expired",
-    reminderStatus: "Pending",
-    createdAt: "2025-01-05T10:00:00Z"
+// Async Thunks
+export const fetchCOIs = createAsyncThunk(
+  'coi/fetchCOIs',
+  async (filters = {}, { rejectWithValue }) => {
+    try {
+      const response = await COIService.getCOIs(filters);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
   }
-];
+);
 
-
-const loadInitialState = () => {
-  try {
-    const savedData = localStorage.getItem("coiData");
-    return {
-      coiData: savedData ? JSON.parse(savedData) : initialData,
-      selectedRows: [],
-      filters: {
-        property: "",
-        status: "",
-        expiryFilter: "",
-        searchTerm: ""
-      },
-      pagination: {
-        page: 1,
-        rowsPerPage: 10
-      },
-      loading: false,
-      error: null
-    };
-  } catch (error) {
-    console.log(error)
-    return {
-      coiData: initialData,
-      selectedRows: [],
-      filters: {
-        property: "",
-        status: "",
-        expiryFilter: "",
-        searchTerm: ""
-      },
-      pagination: {
-        page: 1,
-        rowsPerPage: 10
-      },
-      loading: false,
-      error: null
-    };
+export const fetchCOIById = createAsyncThunk(
+  'coi/fetchCOIById',
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await COIService.getCOIById(id);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
   }
+);
+
+export const addCOI = createAsyncThunk(
+  'coi/addCOI',
+  async (coiData, { rejectWithValue }) => {
+    try {
+      const response = await COIService.createCOI(coiData);
+      toast.success('COI added successfully');
+      return response;
+    } catch (error) {
+      toast.error('Failed to add COI');
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const updateCOI = createAsyncThunk(
+  'coi/updateCOI',
+  async ({ id, updatedData }, { rejectWithValue }) => {
+    try {
+      const response = await COIService.updateCOI(id, updatedData);
+      toast.success('COI updated successfully');
+      return response;
+    } catch (error) {
+      toast.error('Failed to update COI');
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const deleteCOI = createAsyncThunk(
+  'coi/deleteCOI',
+  async (id, { rejectWithValue }) => {
+    try {
+      await COIService.deleteCOI(id);
+      toast.success('COI deleted successfully');
+      return id;
+    } catch (error) {
+      toast.error('Failed to delete COI');
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const bulkDeleteCOI = createAsyncThunk(
+  'coi/bulkDeleteCOI',
+  async (ids, { rejectWithValue }) => {
+    try {
+      await COIService.bulkDeleteCOI(ids);
+      toast.success(`${ids.length} COI(s) deleted successfully`);
+      return ids;
+    } catch (error) {
+      toast.error('Failed to delete COIs');
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const fetchProperties = createAsyncThunk(
+  'coi/fetchProperties',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await COIService.getProperties();
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const addProperty = createAsyncThunk(
+  'coi/addProperty',
+  async (property, { rejectWithValue }) => {
+    try {
+      const response = await COIService.addProperty(property);
+      toast.success('Property added successfully');
+      return response;
+    } catch (error) {
+      toast.error(error.message || 'Failed to add property');
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const deleteProperty = createAsyncThunk(
+  'coi/deleteProperty',
+  async (propertyValue, { rejectWithValue }) => {
+    try {
+      await COIService.deleteProperty(propertyValue);
+      toast.success('Property deleted successfully');
+      return propertyValue;
+    } catch (error) {
+      toast.error(error.message || 'Failed to delete property');
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const sendReminder = createAsyncThunk(
+  'coi/sendReminder',
+  async ({ coiId, type, message }, { rejectWithValue }) => {
+    try {
+      const response = await COIService.sendReminder(coiId, { type, message });
+      toast.success('Reminder sent successfully');
+      return response;
+    } catch (error) {
+      toast.error('Failed to send reminder');
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const sendBulkReminders = createAsyncThunk(
+  'coi/sendBulkReminders',
+  async ({ ids, reminderType }, { rejectWithValue }) => {
+    try {
+      const response = await COIService.sendBulkReminders(ids, reminderType);
+      console.log(response)
+      toast.success(`Reminders sent to ${ids.length} recipient(s)`);
+      return { ids, reminderType, sentAt: new Date().toISOString() };
+    } catch (error) {
+      toast.error('Failed to send reminders');
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const fetchSummaryStats = createAsyncThunk(
+  'coi/fetchSummaryStats',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await COIService.getSummaryStats();
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const reinitializeData = createAsyncThunk(
+  'coi/reinitializeData',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await COIService.reinitializeData();
+      toast.success('Data reinitialized successfully');
+      return response;
+    } catch (error) {
+      toast.error('Failed to reinitialize data');
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const resetToInitial = createAsyncThunk(
+  'coi/resetToInitial',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await COIService.resetToInitial();
+      toast.success('Data reset to initial state');
+      return response;
+    } catch (error) {
+      toast.error('Failed to reset data');
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+const initialState = {
+  coiData: [],
+  selectedCOI: null,
+  properties: [],
+  selectedRows: [],
+  filters: {
+    property: '',
+    status: '',
+    expiryFilter: '',
+    searchTerm: ''
+  },
+  pagination: {
+    page: 1,
+    rowsPerPage: 10
+  },
+  summaryStats: {
+    total: 0,
+    active: 0,
+    expired: 0,
+    rejected: 0,
+    expiringSoon: 0,
+    notProcessed: 0,
+    expiringIn30Days: 0
+  },
+  loading: false,
+  propertiesLoading: false,
+  error: null,
+  lastFetched: null,
+  initialized: false
 };
 
 const coiSlice = createSlice({
   name: 'coi',
-  initialState: loadInitialState(),
+  initialState,
   reducers: {
-    
-    addCOI: (state, action) => {
-      const newCOI = {
-        ...action.payload,
-        id: Date.now().toString(),
-        createdAt: new Date().toISOString(),
-        reminderStatus: "Not Sent"
-      };
-      state.coiData.unshift(newCOI);
-      localStorage.setItem("coiData", JSON.stringify(state.coiData));
-      toast.success("COI added successfully");
-    },
-    
-    updateCOI: (state, action) => {
-      const { id, updatedData } = action.payload;
-      const index = state.coiData.findIndex(item => item.id === id);
-      if (index !== -1) {
-        state.coiData[index] = { ...state.coiData[index], ...updatedData };
-        localStorage.setItem("coiData", JSON.stringify(state.coiData));
-        toast.success("COI updated successfully");
-      }
-    },
-    
-    deleteCOI: (state, action) => {
-      state.coiData = state.coiData.filter(item => item.id !== action.payload);
-      state.selectedRows = state.selectedRows.filter(id => id !== action.payload);
-      localStorage.setItem("coiData", JSON.stringify(state.coiData));
-      toast.success("COI deleted successfully");
-    },
-    
-    bulkDeleteCOI: (state, action) => {
-      state.coiData = state.coiData.filter(item => !action.payload.includes(item.id));
-      state.selectedRows = [];
-      localStorage.setItem("coiData", JSON.stringify(state.coiData));
-      toast.success(`${action.payload.length} COI(s) deleted successfully`);
-    },
-
+    // Row selection
     setSelectedRows: (state, action) => {
       state.selectedRows = action.payload;
     },
@@ -195,24 +265,13 @@ const coiSlice = createSlice({
       state.filters.searchTerm = action.payload;
       state.pagination.page = 1;
     },
-sendReminder: (state, action) => {
-  const { coiId, type, message } = action.payload;
-  
-  const coi = state.cois.find(c => c.id === coiId);
-  if (coi) {
-    coi.reminderStatus = `Sent (${new Date().toLocaleDateString()})`;
-    coi.lastReminderSent = new Date().toISOString();
-    coi.lastReminderType = type;
-    coi.lastReminderMessage = message;
-  }
-},
     
     clearFilters: (state) => {
       state.filters = {
-        property: "",
-        status: "",
-        expiryFilter: "",
-        searchTerm: ""
+        property: '',
+        status: '',
+        expiryFilter: '',
+        searchTerm: ''
       };
       state.pagination.page = 1;
     },
@@ -227,37 +286,206 @@ sendReminder: (state, action) => {
       state.pagination.page = 1;
     },
 
-    //------------------ Bulk reminder-------------------------
-    sendBulkReminders: (state, action) => {
-      const { ids, reminderType } = action.payload;
-      reminderType
-      state.coiData = state.coiData.map(item => 
-        ids.includes(item.id) 
-          ? { ...item, reminderStatus: "Sent", lastReminderSent: new Date().toISOString() }
-          : item
-      );
-      localStorage.setItem("coiData", JSON.stringify(state.coiData));
-      toast.success(`Reminders sent to ${ids.length} recipient(s)`);
+    // Selected COI
+    setSelectedCOI: (state, action) => {
+      state.selectedCOI = action.payload;
+    },
+    
+    clearSelectedCOI: (state) => {
+      state.selectedCOI = null;
     },
 
-    // -----------------------Update reminder status---------------------------
+    // Reminder status update (synchronous)
     updateReminderStatus: (state, action) => {
       const { id, status } = action.payload;
       const index = state.coiData.findIndex(item => item.id === id);
       if (index !== -1) {
         state.coiData[index].reminderStatus = status;
+        if (status === 'Sent') {
+          state.coiData[index].lastReminderSent = new Date().toISOString();
+        }
         localStorage.setItem("coiData", JSON.stringify(state.coiData));
       }
+    },
+    
+    // Set initialized state
+    setInitialized: (state, action) => {
+      state.initialized = action.payload;
+    },
+    
+    // Clear error
+    clearError: (state) => {
+      state.error = null;
     }
+  },
+  extraReducers: (builder) => {
+    builder
+      // Fetch COIs
+      .addCase(fetchCOIs.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchCOIs.fulfilled, (state, action) => {
+        state.loading = false;
+        state.coiData = action.payload;
+        state.lastFetched = new Date().toISOString();
+        state.initialized = true;
+      })
+      .addCase(fetchCOIs.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.initialized = true;
+      })
+      
+      // Fetch COI by ID
+      .addCase(fetchCOIById.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchCOIById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selectedCOI = action.payload;
+      })
+      .addCase(fetchCOIById.rejected, (state) => {
+        state.loading = false;
+      })
+      
+      // Add COI
+      .addCase(addCOI.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(addCOI.fulfilled, (state, action) => {
+        state.loading = false;
+        state.coiData.unshift(action.payload);
+      })
+      .addCase(addCOI.rejected, (state) => {
+        state.loading = false;
+      })
+      
+      // Update COI
+      .addCase(updateCOI.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateCOI.fulfilled, (state, action) => {
+        state.loading = false;
+        const index = state.coiData.findIndex(item => item.id === action.payload.id);
+        if (index !== -1) {
+          state.coiData[index] = action.payload;
+        }
+        if (state.selectedCOI?.id === action.payload.id) {
+          state.selectedCOI = action.payload;
+        }
+      })
+      .addCase(updateCOI.rejected, (state) => {
+        state.loading = false;
+      })
+      
+      // Delete COI
+      .addCase(deleteCOI.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteCOI.fulfilled, (state, action) => {
+        state.loading = false;
+        state.coiData = state.coiData.filter(item => item.id !== action.payload);
+        state.selectedRows = state.selectedRows.filter(id => id !== action.payload);
+        if (state.selectedCOI?.id === action.payload) {
+          state.selectedCOI = null;
+        }
+      })
+      .addCase(deleteCOI.rejected, (state) => {
+        state.loading = false;
+      })
+      
+      // Bulk Delete COIs
+      .addCase(bulkDeleteCOI.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(bulkDeleteCOI.fulfilled, (state, action) => {
+        state.loading = false;
+        state.coiData = state.coiData.filter(item => !action.payload.includes(item.id));
+        state.selectedRows = [];
+      })
+      .addCase(bulkDeleteCOI.rejected, (state) => {
+        state.loading = false;
+      })
+      
+      // Fetch Properties
+      .addCase(fetchProperties.pending, (state) => {
+        state.propertiesLoading = true;
+      })
+      .addCase(fetchProperties.fulfilled, (state, action) => {
+        state.propertiesLoading = false;
+        state.properties = action.payload;
+      })
+      .addCase(fetchProperties.rejected, (state) => {
+        state.propertiesLoading = false;
+      })
+      
+      // Add Property
+      .addCase(addProperty.fulfilled, (state, action) => {
+        state.properties.push(action.payload);
+      })
+      
+      // Delete Property
+      .addCase(deleteProperty.fulfilled, (state, action) => {
+        state.properties = state.properties.filter(p => 
+          p.value !== action.payload && 
+          p.name !== action.payload && 
+          p.label !== action.payload
+        );
+      })
+      
+      // Send Reminder
+      .addCase(sendReminder.fulfilled, (state, action) => {
+        const index = state.coiData.findIndex(item => item.id === action.payload.id);
+        if (index !== -1) {
+          state.coiData[index] = action.payload;
+        }
+      })
+      
+      // Send Bulk Reminders
+      .addCase(sendBulkReminders.fulfilled, (state, action) => {
+        const { ids, reminderType, sentAt } = action.payload;
+        state.coiData = state.coiData.map(item => 
+          ids.includes(item.id) 
+            ? { 
+                ...item, 
+                reminderStatus: 'Sent', 
+                lastReminderSent: sentAt,
+                lastReminderType: reminderType
+              }
+            : item
+        );
+      })
+      
+      // Fetch Summary Stats
+      .addCase(fetchSummaryStats.fulfilled, (state, action) => {
+        state.summaryStats = action.payload;
+      })
+      
+      // Reinitialize Data
+      .addCase(reinitializeData.fulfilled, (state) => {
+        state.coiData = [];
+        state.properties = [];
+        state.selectedCOI = null;
+        state.selectedRows = [];
+        state.summaryStats = initialState.summaryStats;
+        state.initialized = false;
+      })
+      
+      // Reset to Initial
+      .addCase(resetToInitial.fulfilled, (state) => {
+        state.coiData = [];
+        state.properties = [];
+        state.selectedCOI = null;
+        state.selectedRows = [];
+        state.summaryStats = initialState.summaryStats;
+        state.initialized = false;
+      });
   }
 });
 
-
+// Export all actions
 export const {
-  addCOI,
-  updateCOI,
-  deleteCOI,
-  bulkDeleteCOI,
   setSelectedRows,
   toggleSelectRow,
   clearSelectedRows,
@@ -265,43 +493,68 @@ export const {
   setStatusFilter,
   setExpiryFilter,
   setSearchTerm,
-  sendReminder,
   clearFilters,
   setPage,
   setRowsPerPage,
-  sendBulkReminders,
-  updateReminderStatus
+  setSelectedCOI,
+  clearSelectedCOI,
+  updateReminderStatus,
+  setInitialized,
+  clearError
 } = coiSlice.actions;
 
-
-export const selectAllCOIs = (state) => state.coi.coiData;
-export const selectSelectedRows = (state) => state.coi.selectedRows;
+// Selectors
+export const selectAllCOIs = (state) => state.coi.coiData || [];
+export const selectSelectedCOI = (state) => state.coi.selectedCOI;
+export const selectSelectedRows = (state) => state.coi.selectedRows || [];
 export const selectFilters = (state) => state.coi.filters;
 export const selectPagination = (state) => state.coi.pagination;
+export const selectProperties = (state) => state.coi.properties || [];
+export const selectLoading = (state) => state.coi.loading;
+export const selectPropertiesLoading = (state) => state.coi.propertiesLoading;
+export const selectError = (state) => state.coi.error;
+export const selectSummaryStats = (state) => state.coi.summaryStats;
+export const selectLastFetched = (state) => state.coi.lastFetched;
+export const selectInitialized = (state) => state.coi.initialized;
 
-
+// Filtered COIs selector
 export const selectFilteredCOIs = createSelector(
   [selectAllCOIs, selectFilters],
   (coiData, filters) => {
+    if (!coiData || coiData.length === 0) return [];
+    
     return coiData.filter(item => {
-      const matchesProperty = !filters.property || item.property === filters.property;
+      const matchesProperty = !filters.property || 
+        item.property === filters.property ||
+        item.propertyId === filters.property;
+      
       const matchesStatus = !filters.status || item.status === filters.status;
+      
       const matchesSearch = !filters.searchTerm || 
-        item.tenantName.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
-        item.property.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
-        item.unit.toLowerCase().includes(filters.searchTerm.toLowerCase());
+        (item.tenantName && item.tenantName.toLowerCase().includes(filters.searchTerm.toLowerCase())) ||
+        (item.property && item.property.toLowerCase().includes(filters.searchTerm.toLowerCase())) ||
+        (item.unit && item.unit.toLowerCase().includes(filters.searchTerm.toLowerCase())) ||
+        (item.coiName && item.coiName.toLowerCase().includes(filters.searchTerm.toLowerCase())) ||
+        (item.tenantEmail && item.tenantEmail.toLowerCase().includes(filters.searchTerm.toLowerCase()));
       
       let matchesExpiry = true;
-      if (filters.expiryFilter === "expired") {
-        matchesExpiry = new Date(item.expiryDate) < new Date();
-      } else if (filters.expiryFilter === "expiring30") {
-        const thirtyDaysFromNow = new Date();
-        thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
-        matchesExpiry = new Date(item.expiryDate) <= thirtyDaysFromNow && new Date(item.expiryDate) >= new Date();
-      } else if (filters.expiryFilter === "expiring90") {
-        const ninetyDaysFromNow = new Date();
-        ninetyDaysFromNow.setDate(ninetyDaysFromNow.getDate() + 90);
-        matchesExpiry = new Date(item.expiryDate) <= ninetyDaysFromNow && new Date(item.expiryDate) >= new Date();
+      
+      if (item.expiryDate && filters.expiryFilter) {
+        const expiryDate = new Date(item.expiryDate);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        if (filters.expiryFilter === 'expired') {
+          matchesExpiry = expiryDate < today;
+        } else if (filters.expiryFilter === 'expiring30') {
+          const thirtyDaysFromNow = new Date(today);
+          thirtyDaysFromNow.setDate(today.getDate() + 30);
+          matchesExpiry = expiryDate <= thirtyDaysFromNow && expiryDate >= today;
+        } else if (filters.expiryFilter === 'expiring90') {
+          const ninetyDaysFromNow = new Date(today);
+          ninetyDaysFromNow.setDate(today.getDate() + 90);
+          matchesExpiry = expiryDate <= ninetyDaysFromNow && expiryDate >= today;
+        }
       }
 
       return matchesProperty && matchesStatus && matchesSearch && matchesExpiry;
@@ -312,6 +565,7 @@ export const selectFilteredCOIs = createSelector(
 export const selectPaginatedCOIs = createSelector(
   [selectFilteredCOIs, selectPagination],
   (filteredData, pagination) => {
+    if (!filteredData || filteredData.length === 0) return [];
     const { page, rowsPerPage } = pagination;
     const startIndex = (page - 1) * rowsPerPage;
     return filteredData.slice(startIndex, startIndex + rowsPerPage);
@@ -321,38 +575,37 @@ export const selectPaginatedCOIs = createSelector(
 export const selectTotalPages = createSelector(
   [selectFilteredCOIs, selectPagination],
   (filteredData, pagination) => {
+    if (!filteredData || filteredData.length === 0) return 1;
     return Math.ceil(filteredData.length / pagination.rowsPerPage) || 1;
   }
 );
 
-export const selectSummaryStats = createSelector(
-  [selectAllCOIs],
-  (coiData) => {
-    const today = new Date();
-    const thirtyDaysFromNow = new Date(today);
-    thirtyDaysFromNow.setDate(today.getDate() + 30);
-
-    return {
-      total: coiData.length,
-      accepted: coiData.filter((item) => item.status === "Active").length,
-      rejected: coiData.filter((item) => item.status === "Rejected").length,
-      expiringIn30Days: coiData.filter((item) => {
-        if (!item.expiryDate) return false;
-        const expiry = new Date(item.expiryDate);
-        return expiry <= thirtyDaysFromNow && expiry > new Date();
-      }).length
-    };
+export const selectPropertyOptions = createSelector(
+  [selectProperties],
+  (properties) => {
+    if (!properties || properties.length === 0) return [];
+    
+    return properties.map(p => ({
+      id: p.id,
+      label: p.label || p.name || p.value,
+      value: p.value || p.name || p.label,
+      name: p.name || p.label || p.value,
+      address: p.address || '',
+      city: p.city || '',
+      state: p.state || '',
+      zipCode: p.zipCode || ''
+    }));
   }
 );
 
-export const selectPropertyOptions = createSelector(
+export const selectTotalCOICount = createSelector(
   [selectAllCOIs],
-  (coiData) => {
-    return [...new Set(coiData.map(item => item.property))].map(p => ({
-      label: p,
-      value: p
-    }));
-  }
+  (coiData) => coiData?.length || 0
+);
+
+export const selectActiveCOICount = createSelector(
+  [selectAllCOIs],
+  (coiData) => coiData?.filter(c => c.status === 'Active').length || 0
 );
 
 export default coiSlice.reducer;
