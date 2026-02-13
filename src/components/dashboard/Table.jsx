@@ -1,14 +1,25 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Select from "../globalReuseComponents/Select";
-import { Search, Settings, Plus, Send, ChevronDown, MoreVertical, Pencil, Trash2, X, Filter } from "lucide-react";
+import {
+  Search,
+  Settings,
+  Plus,
+  Send,
+  ChevronDown,
+  MoreVertical,
+  Pencil,
+  Trash2,
+  X,
+  Filter,
+} from "lucide-react";
 import Pagination from "./Pagination";
 import COIModal from "./COIModal";
 import COIDetailModal from "./COIDetailModal";
 import BulkReminderModal from "./BulkReminderModal";
 import ReminderActionModal from "../dashboard/ReminderActionModal";
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import {
   fetchCOIs,
   fetchProperties,
@@ -32,16 +43,16 @@ import {
   deleteCOI,
   bulkDeleteCOI,
   sendReminder,
-  clearFilters
+  clearFilters,
 } from "../../store/coiSlice";
 import toast from "react-hot-toast";
 
 const STATUS_CONFIG = {
-  "Active": { bg: "#DBEAFE", text: "#1E40AF", border: "#9EC3FF" },
-  "Expired": { bg: "#FEEEEA", text: "#E04C24", border: "#F98C6F" },
-  "Rejected": { bg: "#FDF4F7", text: "#FF3535", border: "#FBE0B7" },
+  Active: { bg: "#DBEAFE", text: "#1E40AF", border: "#9EC3FF" },
+  Expired: { bg: "#FEEEEA", text: "#E04C24", border: "#F98C6F" },
+  Rejected: { bg: "#FDF4F7", text: "#FF3535", border: "#FBE0B7" },
   "Expiring Soon": { bg: "#FEF7EC", text: "#B7720B", border: "#FBE0B7" },
-  "Not Processed": { bg: "#F9FAFA", text: "#4F5857", border: "#ADB1B1" }
+  "Not Processed": { bg: "#F9FAFA", text: "#4F5857", border: "#ADB1B1" },
 };
 
 const STATUS_OPTIONS = [
@@ -49,54 +60,81 @@ const STATUS_OPTIONS = [
   { label: "Expired", value: "Expired" },
   { label: "Rejected", value: "Rejected" },
   { label: "Expiring Soon", value: "Expiring Soon" },
-  { label: "Not Processed", value: "Not Processed" }
+  { label: "Not Processed", value: "Not Processed" },
 ];
 
 const EXPIRY_FILTER_OPTIONS = [
   { label: "All", value: "all" },
   { label: "Expired", value: "expired" },
   { label: "Expiring in 30 days", value: "expiring30" },
-  { label: "Expiring in 90 days", value: "expiring90" }
+  { label: "Expiring in 90 days", value: "expiring90" },
 ];
 
 // Mobile Card View Component
-const MobileCOICard = ({ item, selectedRows, handleSelectRow, handleRowClick, handleStatusChange, statusEditId, setStatusEditId, handleExpiryEdit, handleSendReminder, getReminderStatus, getReminderStatusClass, formatDate, truncateText, loading, actionMenuId, setActionMenuId, setSelectedCOI, handleDeleteCOI, selectedCOI }) => {
+const MobileCOICard = ({
+  item,
+  selectedRows,
+  handleSelectRow,
+  handleRowClick,
+  handleStatusChange,
+  statusEditId,
+  setStatusEditId,
+  handleExpiryEdit,
+  handleSendReminder,
+  getReminderStatus,
+  getReminderStatusClass,
+  formatDate,
+  truncateText,
+  loading,
+  actionMenuId,
+  setActionMenuId,
+  setSelectedCOI,
+  handleDeleteCOI,
+  selectedCOI,
+}) => {
   const reminderStatus = getReminderStatus(item);
   const [showActions, setShowActions] = useState(false);
   const actionMenuRef = useRef(null);
-  
+
   // Handle click outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (actionMenuRef.current && !actionMenuRef.current.contains(event.target)) {
+      if (
+        actionMenuRef.current &&
+        !actionMenuRef.current.contains(event.target)
+      ) {
         setShowActions(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-  
+
   return (
-    <div className={`bg-white rounded-lg border border-gray-200 p-4 mb-3 shadow-sm ${
-      selectedRows.includes(item.id) ? 'bg-blue-50/50 border-blue-200' : ''
-    }`}>
+    <div
+      className={`bg-white rounded-lg border border-gray-200 p-4 mb-3 shadow-sm ${
+        selectedRows.includes(item.id) ? "bg-blue-50/50 border-blue-200" : ""
+      }`}
+    >
       {/* Checkbox and Actions Row */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-3">
-          <input 
-            type="checkbox" 
+          <input
+            type="checkbox"
             checked={selectedRows.includes(item.id)}
             onChange={() => handleSelectRow(item.id)}
             onClick={(e) => e.stopPropagation()}
             className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
             disabled={loading}
           />
-          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getReminderStatusClass(reminderStatus)}`}>
+          <span
+            className={`px-2 py-1 rounded-full text-xs font-medium ${getReminderStatusClass(reminderStatus)}`}
+          >
             {reminderStatus}
           </span>
         </div>
         <div className="relative">
-          <button 
+          <button
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors border border-gray-200 bg-white shadow-sm"
             onClick={(e) => {
               e.stopPropagation();
@@ -106,14 +144,14 @@ const MobileCOICard = ({ item, selectedRows, handleSelectRow, handleRowClick, ha
           >
             <MoreVertical size={20} className="text-gray-700" />
           </button>
-          
+
           {showActions && (
             <>
-              <div 
-                className="fixed inset-0 z-[9998]" 
+              <div
+                className="fixed inset-0 z-[9998]"
                 onClick={() => setShowActions(false)}
               />
-              <div 
+              <div
                 ref={actionMenuRef}
                 className="absolute right-0 top-full mt-1 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-[9999]"
               >
@@ -162,8 +200,12 @@ const MobileCOICard = ({ item, selectedRows, handleSelectRow, handleRowClick, ha
       <div className="space-y-3" onClick={() => handleRowClick(item)}>
         <div className="flex flex-wrap items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
-            <p className="text-base font-semibold text-gray-900 truncate">{item.tenantName || "N/A"}</p>
-            <p className="text-sm text-gray-600 truncate">{item.property || "N/A"} {item.unit ? `- ${item.unit}` : ''}</p>
+            <p className="text-base font-semibold text-gray-900 truncate">
+              {item.tenantName || "N/A"}
+            </p>
+            <p className="text-sm text-gray-600 truncate">
+              {item.property || "N/A"} {item.unit ? `- ${item.unit}` : ""}
+            </p>
           </div>
           <div className="flex-shrink-0">
             <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
@@ -176,7 +218,9 @@ const MobileCOICard = ({ item, selectedRows, handleSelectRow, handleRowClick, ha
           <div>
             <p className="text-xs text-gray-500 mb-1">Expiry Date</p>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium">{formatDate(item.expiryDate)}</span>
+              <span className="text-sm font-medium">
+                {formatDate(item.expiryDate)}
+              </span>
               <button
                 onClick={(e) => handleExpiryEdit(e, item.id)}
                 className="p-1 hover:bg-gray-100 rounded"
@@ -185,7 +229,7 @@ const MobileCOICard = ({ item, selectedRows, handleSelectRow, handleRowClick, ha
               </button>
             </div>
           </div>
-          
+
           <div>
             <p className="text-xs text-gray-500 mb-1">Status</p>
             {statusEditId === item.id ? (
@@ -226,16 +270,20 @@ const MobileCOICard = ({ item, selectedRows, handleSelectRow, handleRowClick, ha
 };
 
 const StatusBadge = ({ status }) => {
-  const config = STATUS_CONFIG[status] || { bg: '#F3F4F6', text: '#374151', border: '#D1D5DB' };
-  
+  const config = STATUS_CONFIG[status] || {
+    bg: "#F3F4F6",
+    text: "#374151",
+    border: "#D1D5DB",
+  };
+
   return (
-    <span 
+    <span
       className="inline-block px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap cursor-pointer hover:opacity-80 transition"
       style={{
         backgroundColor: config.bg,
         color: config.text,
         borderColor: config.border,
-        borderWidth: '1px'
+        borderWidth: "1px",
       }}
     >
       {status}
@@ -252,25 +300,28 @@ const StatusDropdown = ({ value, onChange, onClick }) => {
         onClick={onClick}
         className="w-full px-3 py-1.5 pr-8 text-sm rounded-lg border appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
         style={{
-          backgroundColor: STATUS_CONFIG[value]?.bg || '#F3F4F6',
-          color: STATUS_CONFIG[value]?.text || '#374151',
-          borderColor: STATUS_CONFIG[value]?.border || '#D1D5DB'
+          backgroundColor: STATUS_CONFIG[value]?.bg || "#F3F4F6",
+          color: STATUS_CONFIG[value]?.text || "#374151",
+          borderColor: STATUS_CONFIG[value]?.border || "#D1D5DB",
         }}
       >
-        {STATUS_OPTIONS.map(option => (
-          <option 
-            key={option.value} 
+        {STATUS_OPTIONS.map((option) => (
+          <option
+            key={option.value}
             value={option.value}
             style={{
               backgroundColor: STATUS_CONFIG[option.value]?.bg,
-              color: STATUS_CONFIG[option.value]?.text
+              color: STATUS_CONFIG[option.value]?.text,
             }}
           >
             {option.label}
           </option>
         ))}
       </select>
-      <ChevronDown size={16} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
+      <ChevronDown
+        size={16}
+        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+      />
     </div>
   );
 };
@@ -327,7 +378,7 @@ const MobileCardSkeleton = () => (
 
 export default function Table() {
   const dispatch = useDispatch();
-  
+
   // Redux selectors
   const paginatedData = useSelector(selectPaginatedCOIs);
   const selectedRows = useSelector(selectSelectedRows);
@@ -344,7 +395,7 @@ export default function Table() {
     edit: false,
     detail: false,
     bulkReminder: false,
-    reminderAction: false
+    reminderAction: false,
   });
   const [selectedCOI, setSelectedCOI] = useState(null);
   const [actionMenuId, setActionMenuId] = useState(null);
@@ -352,11 +403,13 @@ export default function Table() {
   const [initialLoad, setInitialLoad] = useState(true);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [isMobileView, setIsMobileView] = useState(false);
-  
+
   // Search state for better UX
-  const [localSearchTerm, setLocalSearchTerm] = useState(filters.searchTerm || "");
+  const [localSearchTerm, setLocalSearchTerm] = useState(
+    filters.searchTerm || "",
+  );
   const debounceTimeoutRef = useRef(null);
-  
+
   // Refs
   const statusSelectRef = useRef(null);
   const actionMenuRef = useRef(null);
@@ -368,10 +421,10 @@ export default function Table() {
     const checkMobileView = () => {
       setIsMobileView(window.innerWidth < 1024); // Changed from 768 to 1024 for iPad
     };
-    
+
     checkMobileView();
-    window.addEventListener('resize', checkMobileView);
-    return () => window.removeEventListener('resize', checkMobileView);
+    window.addEventListener("resize", checkMobileView);
+    return () => window.removeEventListener("resize", checkMobileView);
   }, []);
 
   // Initial data fetch
@@ -381,11 +434,11 @@ export default function Table() {
         await Promise.all([
           dispatch(fetchCOIs(filters)).unwrap(),
           dispatch(fetchProperties()).unwrap(),
-          dispatch(fetchSummaryStats()).unwrap()
+          dispatch(fetchSummaryStats()).unwrap(),
         ]);
       } catch (error) {
-        console.error('Failed to load initial data:', error);
-        toast.error('Failed to load data');
+        console.error("Failed to load initial data:", error);
+        toast.error("Failed to load data");
       } finally {
         setInitialLoad(false);
       }
@@ -395,17 +448,20 @@ export default function Table() {
   }, []);
 
   // Debounced search dispatch
-  const debouncedSearch = useCallback((searchValue) => {
-    if (debounceTimeoutRef.current) {
-      clearTimeout(debounceTimeoutRef.current);
-    }
-    
-    debounceTimeoutRef.current = setTimeout(() => {
-      if (searchValue !== filters.searchTerm) {
-        dispatch(setSearchTerm(searchValue));
+  const debouncedSearch = useCallback(
+    (searchValue) => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
       }
-    }, 500);
-  }, [dispatch, filters.searchTerm]);
+
+      debounceTimeoutRef.current = setTimeout(() => {
+        if (searchValue !== filters.searchTerm) {
+          dispatch(setSearchTerm(searchValue));
+        }
+      }, 500);
+    },
+    [dispatch, filters.searchTerm],
+  );
 
   // Handle search input change
   const handleSearchChange = (e) => {
@@ -450,23 +506,29 @@ export default function Table() {
       return () => clearTimeout(debounceTimer);
     }
   }, [
-    filters.property, 
-    filters.status, 
-    filters.expiryFilter, 
+    filters.property,
+    filters.status,
+    filters.expiryFilter,
     filters.searchTerm,
-    filters.rowsPerPage, 
-    filters.page, 
-    dispatch, 
-    initialLoad
+    filters.rowsPerPage,
+    filters.page,
+    dispatch,
+    initialLoad,
   ]);
 
   // Handle click outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (statusSelectRef.current && !statusSelectRef.current.contains(event.target)) {
+      if (
+        statusSelectRef.current &&
+        !statusSelectRef.current.contains(event.target)
+      ) {
         setStatusEditId(null);
       }
-      if (actionMenuRef.current && !actionMenuRef.current.contains(event.target)) {
+      if (
+        actionMenuRef.current &&
+        !actionMenuRef.current.contains(event.target)
+      ) {
         setActionMenuId(null);
       }
     };
@@ -478,7 +540,9 @@ export default function Table() {
   // Update select all state
   useEffect(() => {
     if (paginatedData.length > 0) {
-      const allVisibleSelected = paginatedData.every(item => selectedRows.includes(item.id));
+      const allVisibleSelected = paginatedData.every((item) =>
+        selectedRows.includes(item.id),
+      );
       setSelectAll(allVisibleSelected && selectedRows.length > 0);
     } else {
       setSelectAll(false);
@@ -486,17 +550,17 @@ export default function Table() {
   }, [selectedRows, paginatedData]);
 
   const handleModalOpen = (modalName, data = null) => {
-    setModalState(prev => ({ ...prev, [modalName]: true }));
+    setModalState((prev) => ({ ...prev, [modalName]: true }));
     if (data) setSelectedCOI(data);
   };
 
   const handleModalClose = async (modalName) => {
-    setModalState(prev => ({ ...prev, [modalName]: false }));
+    setModalState((prev) => ({ ...prev, [modalName]: false }));
     setSelectedCOI(null);
     setActionMenuId(null);
     setStatusEditId(null);
-    
-    if (['add', 'edit', 'detail'].includes(modalName)) {
+
+    if (["add", "edit", "detail"].includes(modalName)) {
       await dispatch(fetchCOIs(filters));
       await dispatch(fetchSummaryStats());
     }
@@ -504,7 +568,7 @@ export default function Table() {
 
   const handleRowClick = (item) => {
     if (statusEditId === item.id || actionMenuId === item.id) return;
-    handleModalOpen('detail', item);
+    handleModalOpen("detail", item);
   };
 
   const handleSelectRow = (id) => dispatch(toggleSelectRow(id));
@@ -512,7 +576,7 @@ export default function Table() {
   const handleSelectAll = (e) => {
     setSelectAll(e.target.checked);
     if (e.target.checked) {
-      dispatch(setSelectedRows(paginatedData.map(item => item.id)));
+      dispatch(setSelectedRows(paginatedData.map((item) => item.id)));
     } else {
       dispatch(setSelectedRows([]));
     }
@@ -520,33 +584,37 @@ export default function Table() {
 
   const handleStatusChange = async (e, id) => {
     try {
-      await dispatch(updateCOI({ id, updatedData: { status: e.target.value } })).unwrap();
+      await dispatch(
+        updateCOI({ id, updatedData: { status: e.target.value } }),
+      ).unwrap();
       setStatusEditId(null);
-      toast.success('Status updated successfully');
+      toast.success("Status updated successfully");
     } catch (error) {
-      console.error('Failed to update status:', error);
-      toast.error('Failed to update status');
+      console.error("Failed to update status:", error);
+      toast.error("Failed to update status");
     }
   };
 
   const handleExpiryEdit = async (e, id) => {
     e.stopPropagation();
-    const currentItem = paginatedData.find(item => item.id === id);
+    const currentItem = paginatedData.find((item) => item.id === id);
     const currentDate = currentItem?.expiryDate || "";
     const newDate = prompt("Enter new expiry date (YYYY-MM-DD):", currentDate);
-    
+
     if (newDate && newDate !== currentDate) {
       const selectedDate = new Date(newDate);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      
+
       if (selectedDate < today) {
         toast.error("Expiry date cannot be in the past");
         return;
       }
-      
+
       try {
-        await dispatch(updateCOI({ id, updatedData: { expiryDate: newDate } })).unwrap();
+        await dispatch(
+          updateCOI({ id, updatedData: { expiryDate: newDate } }),
+        ).unwrap();
         toast.success("Expiry date updated successfully");
       } catch (error) {
         console.log(error);
@@ -560,24 +628,28 @@ export default function Table() {
       try {
         await dispatch(deleteCOI(id)).unwrap();
         setActionMenuId(null);
-        toast.success('COI deleted successfully');
+        toast.success("COI deleted successfully");
       } catch (error) {
-        console.error('Failed to delete COI:', error);
-        toast.error('Failed to delete COI');
+        console.error("Failed to delete COI:", error);
+        toast.error("Failed to delete COI");
       }
     }
   };
 
   const handleBulkDelete = async () => {
     if (selectedRows.length === 0) return;
-    
-    if (window.confirm(`Are you sure you want to delete ${selectedRows.length} selected COI(s)?`)) {
+
+    if (
+      window.confirm(
+        `Are you sure you want to delete ${selectedRows.length} selected COI(s)?`,
+      )
+    ) {
       try {
         await dispatch(bulkDeleteCOI(selectedRows)).unwrap();
         toast.success(`${selectedRows.length} COI(s) deleted successfully`);
       } catch (error) {
-        console.error('Failed to bulk delete:', error);
-        toast.error('Failed to delete selected COIs');
+        console.error("Failed to bulk delete:", error);
+        toast.error("Failed to delete selected COIs");
       }
     }
   };
@@ -593,22 +665,24 @@ export default function Table() {
 
   const handleSendReminder = async (item) => {
     try {
-      await dispatch(sendReminder({
-        coiId: item.id,
-        type: 'expiry_reminder',
-        message: `Your COI is expiring on ${formatDate(item.expiryDate)}`
-      })).unwrap();
-      toast.success('Reminder sent successfully');
+      await dispatch(
+        sendReminder({
+          coiId: item.id,
+          type: "expiry_reminder",
+          message: `Your COI is expiring on ${formatDate(item.expiryDate)}`,
+        }),
+      ).unwrap();
+      toast.success("Reminder sent successfully");
     } catch (error) {
       console.log(error);
-      toast.error('Failed to send reminder');
+      toast.error("Failed to send reminder");
     }
   };
 
   // Helper functions
   const getTimeAgo = (dateString) => {
     if (!dateString) return null;
-    
+
     const date = new Date(dateString);
     const now = new Date();
     const seconds = Math.floor((now - date) / 1000);
@@ -616,12 +690,12 @@ export default function Table() {
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
 
-    if (seconds < 60) return 'just now';
+    if (seconds < 60) return "just now";
     if (minutes < 60) return `${minutes}m ago`;
     if (hours < 24) return `${hours}h ago`;
-    if (days === 1) return 'yesterday';
+    if (days === 1) return "yesterday";
     if (days < 7) return `${days}d ago`;
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
   };
 
   const getReminderStatus = (item) => {
@@ -629,19 +703,19 @@ export default function Table() {
       const timeAgo = getTimeAgo(item.lastReminderSent);
       return `Sent ${timeAgo}`;
     }
-    
+
     if (item.reminderStatus === "Sent") {
       return "Sent";
     }
-    
+
     if (!item.expiryDate) return "NA";
-    
+
     const today = new Date();
     const expiry = new Date(item.expiryDate);
     if (isNaN(expiry)) return "NA";
-    
+
     const diffDays = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
-    
+
     if (diffDays <= 0) return "Expired";
     if (diffDays <= 30) return `Due in ${diffDays}d`;
     return "Not Sent";
@@ -659,10 +733,10 @@ export default function Table() {
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
     try {
-      return new Date(dateString).toLocaleDateString('en-US', {
-        year: 'numeric', 
-        month: 'short', 
-        day: 'numeric'
+      return new Date(dateString).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
       });
     } catch {
       return dateString;
@@ -671,7 +745,9 @@ export default function Table() {
 
   const truncateText = (text, maxLength = 20) => {
     if (!text) return "";
-    return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
+    return text.length > maxLength
+      ? `${text.substring(0, maxLength)}...`
+      : text;
   };
 
   // Mobile Filters Component
@@ -680,14 +756,14 @@ export default function Table() {
       <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-xl p-4 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold">Filters</h3>
-          <button 
+          <button
             onClick={() => setShowMobileFilters(false)}
             className="p-2 hover:bg-gray-100 rounded-lg"
           >
             <X size={20} />
           </button>
         </div>
-        
+
         <div className="space-y-4">
           <div>
             <label className="font-inter-display font-normal text-[14px] leading-[20px] tracking-normal text-center text-[#2C3635] mb-1 block">
@@ -697,14 +773,19 @@ export default function Table() {
               placeholder="All Properties"
               value={filters.property}
               onChange={(e) => dispatch(setPropertyFilter(e.target.value))}
-              options={[{ label: "All Properties", value: "" }, ...propertyOptions]}
+              options={[
+                { label: "All Properties", value: "" },
+                ...propertyOptions,
+              ]}
               className="w-full font-inter-display font-normal text-[14px] leading-[20px] tracking-normal text-center text-[#2C3635]"
               disabled={loading}
             />
           </div>
-          
+
           <div>
-            <label className="text-sm font-medium text-gray-700 mb-1 block">Status</label>
+            <label className="text-sm font-medium text-gray-700 mb-1 block">
+              Status
+            </label>
             <Select
               placeholder="All Status"
               value={filters.status}
@@ -714,9 +795,11 @@ export default function Table() {
               disabled={loading}
             />
           </div>
-          
+
           <div>
-            <label className="text-sm font-medium text-gray-700 mb-1 block">Expiry</label>
+            <label className="text-sm font-medium text-gray-700 mb-1 block">
+              Expiry
+            </label>
             <Select
               placeholder="Filter by Expiry"
               value={filters.expiryFilter}
@@ -726,7 +809,7 @@ export default function Table() {
               disabled={loading}
             />
           </div>
-          
+
           <button
             onClick={handleClearFilters}
             className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition"
@@ -763,7 +846,7 @@ export default function Table() {
           </div>
 
           {/* Table/Card Container */}
-          <div className="w-full p-4" style={{ minHeight: '400px' }}>
+          <div className="w-full p-4" style={{ minHeight: "400px" }}>
             {isMobileView ? (
               <div className="space-y-3">
                 {[...Array(5)].map((_, index) => (
@@ -832,7 +915,6 @@ export default function Table() {
   return (
     <div className="w-full max-w-full overflow-hidden">
       <div className="relative shadow rounded-md border border-gray-200 bg-white">
-        
         {/* Header Section */}
         <div className="p-3 flex flex-col lg:flex-row lg:items-center gap-4 border-b">
           {/* Desktop Filters - Left side */}
@@ -841,7 +923,10 @@ export default function Table() {
               placeholder="All Properties"
               value={filters.property}
               onChange={(e) => dispatch(setPropertyFilter(e.target.value))}
-              options={[{ label: "All Properties", value: "" }, ...propertyOptions]}
+              options={[
+                { label: "All Properties", value: "" },
+                ...propertyOptions,
+              ]}
               className="w-[140px] lg:w-[150px] font-inter-display font-normal text-[14px] leading-[20px] tracking-normal text-[#2C3635]"
               disabled={loading}
             />
@@ -871,7 +956,9 @@ export default function Table() {
             >
               <Filter size={18} />
               Filters
-              {(filters.property || filters.status || filters.expiryFilter !== 'all') && (
+              {(filters.property ||
+                filters.status ||
+                filters.expiryFilter !== "all") && (
                 <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
               )}
             </button>
@@ -883,10 +970,17 @@ export default function Table() {
           {/* Right side actions */}
           <div className="flex flex-row items-center gap-3">
             <div className="relative w-[200px] lg:w-[280px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                size={18}
+              />
               <input
                 type="text"
-                placeholder={isMobileView ? "Search..." : "Search by tenant, property or unit..."}
+                placeholder={
+                  isMobileView
+                    ? "Search..."
+                    : "Search by tenant, property or unit..."
+                }
                 value={localSearchTerm}
                 onChange={handleSearchChange}
                 className="w-full pl-10 pr-8 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-inter-display font-normal text-[12px] leading-[16px] tracking-normal text-[#2C3635] placeholder:text-[#2C3635] disabled:opacity-50"
@@ -913,11 +1007,11 @@ export default function Table() {
               </button>
               <button
                 className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-[#F9FAFA] rounded-lg hover:bg-blue-700 transition font-inter-display font-normal text-[14px] leading-[20px] tracking-normal text-center whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
-                onClick={() => handleModalOpen('add')}
+                onClick={() => handleModalOpen("add")}
                 disabled={loading}
               >
                 <Plus size={18} />
-                {isMobileView ? 'ADD' : 'ADD COI'}
+                {isMobileView ? "ADD" : "ADD COI"}
               </button>
             </div>
           </div>
@@ -927,11 +1021,12 @@ export default function Table() {
         {selectedRows.length > 0 && (
           <div className="bg-blue-50 px-3 sm:px-4 py-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b">
             <span className="text-sm text-blue-700 font-medium">
-              {selectedRows.length} {selectedRows.length === 1 ? 'item' : 'items'} selected
+              {selectedRows.length}{" "}
+              {selectedRows.length === 1 ? "item" : "items"} selected
             </span>
             <div className="flex gap-2 flex-shrink-0">
               <button
-                onClick={() => handleModalOpen('bulkReminder')}
+                onClick={() => handleModalOpen("bulkReminder")}
                 className="flex-1 sm:flex-none flex items-center justify-center gap-1 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
                 disabled={loading}
               >
@@ -951,10 +1046,10 @@ export default function Table() {
         )}
 
         {/* Table/Card Container */}
-        <div 
+        <div
           ref={tableContainerRef}
           className="w-full"
-          style={{ minHeight: '400px' }}
+          style={{ minHeight: "400px" }}
         >
           {/* Mobile Card View */}
           {isMobileView ? (
@@ -991,7 +1086,10 @@ export default function Table() {
                 <div className="px-4 py-8 text-center text-gray-500">
                   <div className="flex flex-col items-center gap-2">
                     <span>No COI records found</span>
-                    {(filters.property || filters.status || filters.expiryFilter !== 'all' || filters.searchTerm) ? (
+                    {filters.property ||
+                    filters.status ||
+                    filters.expiryFilter !== "all" ||
+                    filters.searchTerm ? (
                       <button
                         onClick={handleClearFilters}
                         className="text-blue-600 hover:text-blue-800 text-sm font-medium"
@@ -1000,7 +1098,7 @@ export default function Table() {
                       </button>
                     ) : (
                       <button
-                        onClick={() => handleModalOpen('add')}
+                        onClick={() => handleModalOpen("add")}
                         className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium"
                       >
                         <Plus size={18} />
@@ -1018,35 +1116,51 @@ export default function Table() {
                 <thead className="text-xs bg-[#eff1f1] border-y">
                   <tr>
                     <th className="w-10 p-4 sticky left-0 bg-[#eff1f1] z-10">
-                      <input 
-                        type="checkbox" 
+                      <input
+                        type="checkbox"
                         checked={selectAll}
                         onChange={handleSelectAll}
                         disabled={loading || paginatedData.length === 0}
                         className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-50"
                       />
                     </th>
-                    <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[120px]">Property</th>
-                    <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[120px]">Tenant Name</th>
-                    <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[80px]">Unit</th>
-                    <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[120px]">COI Name</th>
-<th className="px-4 py-3 min-w-[120px]">
-  <div className="flex items-center ">
-    
-    <span className="font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D]">
-      Expiry Date
-    </span>
+                    <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[120px]">
+                      Property
+                    </th>
+                    <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[120px]">
+                      Tenant Name
+                    </th>
+                    <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[80px]">
+                      Unit
+                    </th>
+                    <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[120px]">
+                      COI Name
+                    </th>
+                    <th className="px-4 py-3 min-w-[120px]">
+                      <div className="flex items-center ">
+                        <span className="font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D]">
+                          Expiry Date
+                        </span>
 
-    <div className="flex flex-col ml-3">
-      <span className="text-[10px] leading-none cursor-pointer text-[#666E6D]">▲</span>
-      <span className="text-[10px] leading-none cursor-pointer text-[#666E6D]">▼</span>
-    </div>
-
-  </div>
-</th>
-                    <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[150px]">Status</th>
-                    <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[140px]">Reminder status</th>
-                    <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[80px] sticky right-0 bg-[#eff1f1] z-10">Action</th>
+                        <div className="flex flex-col ml-3">
+                          <span className="text-[10px] leading-none cursor-pointer text-[#666E6D]">
+                            ▲
+                          </span>
+                          <span className="text-[10px] leading-none cursor-pointer text-[#666E6D]">
+                            ▼
+                          </span>
+                        </div>
+                      </div>
+                    </th>
+                    <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[150px]">
+                      Status
+                    </th>
+                    <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[140px]">
+                      Reminder status
+                    </th>
+                    <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[80px] sticky right-0 bg-[#eff1f1] z-10">
+                      Action
+                    </th>
                   </tr>
                 </thead>
 
@@ -1058,18 +1172,23 @@ export default function Table() {
                   ) : paginatedData.length > 0 ? (
                     paginatedData.map((item, index) => {
                       const reminderStatus = getReminderStatus(item);
-                      
+
                       return (
                         <tr
                           key={item.id}
                           className={`hover:bg-gray-50 transition cursor-pointer ${
-                            selectedRows.includes(item.id) ? "bg-blue-50/50" : ""
-                          } ${loading ? 'opacity-50 pointer-events-none' : ''}`}
+                            selectedRows.includes(item.id)
+                              ? "bg-blue-50/50"
+                              : ""
+                          } ${loading ? "opacity-50 pointer-events-none" : ""}`}
                           onClick={() => handleRowClick(item)}
                         >
-                          <td className="p-4 sticky left-0 bg-white z-10" onClick={(e) => e.stopPropagation()}>
-                            <input 
-                              type="checkbox" 
+                          <td
+                            className="p-4 sticky left-0 bg-white z-10"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <input
+                              type="checkbox"
                               checked={selectedRows.includes(item.id)}
                               onChange={() => handleSelectRow(item.id)}
                               className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
@@ -1077,40 +1196,65 @@ export default function Table() {
                             />
                           </td>
 
-                          <td className="px-4 py-3 truncate font-inter-display font-normal text-[14px] leading-[20px] tracking-normal text-[#4F5857]" title={item.property}>
+                          <td
+                            className="px-4 py-3 truncate font-inter-display font-normal text-[14px] leading-[20px] tracking-normal text-[#4F5857]"
+                            title={item.property}
+                          >
                             {truncateText(item.property, 20)}
                           </td>
-                          
-                          <td className="px-4 py-3 truncate font-inter-display font-normal text-[14px] leading-[20px] tracking-normal text-[#4F5857]" title={item.tenantName}>
+
+                          <td
+                            className="px-4 py-3 truncate font-inter-display font-normal text-[14px] leading-[20px] tracking-normal text-[#4F5857]"
+                            title={item.tenantName}
+                          >
                             {truncateText(item.tenantName, 20)}
                           </td>
-                          
-                          <td className="px-4 py-3 truncate font-inter-display font-normal text-[14px] leading-[20px] tracking-normal text-[#4F5857]" title={item.unit}>
+
+                          <td
+                            className="px-4 py-3 truncate font-inter-display font-normal text-[14px] leading-[20px] tracking-normal text-[#4F5857]"
+                            title={item.unit}
+                          >
                             {item.unit || "—"}
                           </td>
-                          
-                          <td className="px-4 py-3 truncate font-inter-display font-normal text-[14px] leading-[20px] tracking-normal text-[#4F5857]" title={item.coiName}>
+
+                          <td
+                            className="px-4 py-3 truncate font-inter-display font-normal text-[14px] leading-[20px] tracking-normal text-[#4F5857]"
+                            title={item.coiName}
+                          >
                             {truncateText(item.coiName, 20)}
                           </td>
 
                           <td className="px-4 py-3 whitespace-nowrap">
                             <div className="flex items-center gap-2">
-                              <span className="text-gray-700">{formatDate(item.expiryDate)}</span>
+                              <span className="text-gray-700">
+                                {formatDate(item.expiryDate)}
+                              </span>
                               <button
                                 onClick={(e) => handleExpiryEdit(e, item.id)}
                                 className="p-1 hover:bg-gray-100 rounded"
                               >
-                                <Pencil size={14} className="text-gray-400 hover:text-blue-600" />
+                                <Pencil
+                                  size={14}
+                                  className="text-gray-400 hover:text-blue-600"
+                                />
                               </button>
                             </div>
                           </td>
 
-                          <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                          <td
+                            className="px-4 py-3"
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             {statusEditId === item.id ? (
-                              <div ref={statusSelectRef} className="relative z-20 w-[130px]">
+                              <div
+                                ref={statusSelectRef}
+                                className="relative z-20 w-[130px]"
+                              >
                                 <Select
                                   value={item.status}
-                                  onChange={(e) => handleStatusChange(e, item.id)}
+                                  onChange={(e) =>
+                                    handleStatusChange(e, item.id)
+                                  }
                                   options={STATUS_OPTIONS}
                                   className="w-full text-sm border-2 border-blue-500"
                                   autoFocus
@@ -1118,55 +1262,75 @@ export default function Table() {
                                 />
                               </div>
                             ) : (
-                              <div onClick={() => !loading && setStatusEditId(item.id)}>
+                              <div
+                                onClick={() =>
+                                  !loading && setStatusEditId(item.id)
+                                }
+                              >
                                 <StatusDropdown
                                   value={item.status}
-                                  onChange={(e) => handleStatusChange(e, item.id)}
+                                  onChange={(e) =>
+                                    handleStatusChange(e, item.id)
+                                  }
                                   onClick={(e) => e.stopPropagation()}
                                 />
                               </div>
                             )}
                           </td>
 
-                          <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                          <td
+                            className="px-4 py-3"
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             <div className="flex items-center gap-2">
-                              <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${getReminderStatusClass(reminderStatus)}`}>
+                              <span
+                                className={`inline-block px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${getReminderStatusClass(reminderStatus)}`}
+                              >
                                 {reminderStatus}
                               </span>
-                              {reminderStatus === "Not Sent" && item.expiryDate && (
-                                <button
-                                  onClick={() => handleSendReminder(item)}
-                                  className="p-1 hover:bg-gray-100 rounded transition flex-shrink-0"
-                                  title="Send reminder"
-                                  disabled={loading}
-                                >
-                                  <Send size={14} className="text-gray-500" />
-                                </button>
-                              )}
+                              {reminderStatus === "Not Sent" &&
+                                item.expiryDate && (
+                                  <button
+                                    onClick={() => handleSendReminder(item)}
+                                    className="p-1 hover:bg-gray-100 rounded transition flex-shrink-0"
+                                    title="Send reminder"
+                                    disabled={loading}
+                                  >
+                                    <Send size={14} className="text-gray-500" />
+                                  </button>
+                                )}
                             </div>
                           </td>
 
-                          <td className="px-4 py-3 sticky right-0 bg-white z-10" onClick={(e) => e.stopPropagation()}>
+                          <td
+                            className="px-4 py-3 sticky right-0 bg-white z-10"
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             <div className="relative flex justify-center">
-                              <button 
+                              <button
                                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors border border-gray-200 shadow-sm bg-white"
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  setActionMenuId(actionMenuId === item.id ? null : item.id);
+                                  setActionMenuId(
+                                    actionMenuId === item.id ? null : item.id,
+                                  );
                                   setSelectedCOI(item);
                                 }}
                                 disabled={loading}
                               >
-                                <MoreVertical size={18} className="text-gray-700" />
+                                <MoreVertical
+                                  size={18}
+                                  className="text-gray-700"
+                                />
                               </button>
-                              
+
                               {actionMenuId === item.id && (
                                 <>
-                                  <div 
-                                    className="fixed inset-0 z-[9998]" 
+                                  <div
+                                    className="fixed inset-0 z-[9998]"
                                     onClick={() => setActionMenuId(null)}
                                   />
-                                  <div 
+                                  <div
                                     ref={actionMenuRef}
                                     className="absolute right-0 top-full mt-1 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-[9999]"
                                   >
@@ -1175,10 +1339,13 @@ export default function Table() {
                                       onClick={(e) => {
                                         e.stopPropagation();
                                         setActionMenuId(null);
-                                        handleModalOpen('edit', item);
+                                        handleModalOpen("edit", item);
                                       }}
                                     >
-                                      <Pencil size={16} className="text-gray-600" />
+                                      <Pencil
+                                        size={16}
+                                        className="text-gray-600"
+                                      />
                                       <span>Edit COI</span>
                                     </button>
                                     <button
@@ -1198,7 +1365,10 @@ export default function Table() {
                                         setActionMenuId(null);
                                         handleSendReminder(item);
                                       }}
-                                      disabled={reminderStatus === "Sent" || reminderStatus.includes("Sent")}
+                                      disabled={
+                                        reminderStatus === "Sent" ||
+                                        reminderStatus.includes("Sent")
+                                      }
                                     >
                                       <Send size={16} />
                                       <span>Send Reminder</span>
@@ -1213,10 +1383,16 @@ export default function Table() {
                     })
                   ) : (
                     <tr>
-                      <td colSpan={9} className="px-4 py-8 text-center text-gray-500">
+                      <td
+                        colSpan={9}
+                        className="px-4 py-8 text-center text-gray-500"
+                      >
                         <div className="flex flex-col items-center gap-2">
                           <span>No COI records found</span>
-                          {(filters.property || filters.status || filters.expiryFilter !== 'all' || filters.searchTerm) ? (
+                          {filters.property ||
+                          filters.status ||
+                          filters.expiryFilter !== "all" ||
+                          filters.searchTerm ? (
                             <button
                               onClick={handleClearFilters}
                               className="text-blue-600 hover:text-blue-800 text-sm font-medium"
@@ -1225,7 +1401,7 @@ export default function Table() {
                             </button>
                           ) : (
                             <button
-                              onClick={() => handleModalOpen('add')}
+                              onClick={() => handleModalOpen("add")}
                               className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium"
                             >
                               <Plus size={18} />
@@ -1261,38 +1437,38 @@ export default function Table() {
       {showMobileFilters && <MobileFilters />}
 
       {/* Modals */}
-      <COIModal 
+      <COIModal
         isOpen={modalState.add}
-        onClose={() => handleModalClose('add')}
+        onClose={() => handleModalClose("add")}
         mode="add"
       />
 
-      <COIModal 
+      <COIModal
         isOpen={modalState.edit}
-        onClose={() => handleModalClose('edit')}
+        onClose={() => handleModalClose("edit")}
         coi={selectedCOI}
         mode="edit"
       />
 
       <COIDetailModal
         isOpen={modalState.detail}
-        onClose={() => handleModalClose('detail')}
+        onClose={() => handleModalClose("detail")}
         coi={selectedCOI}
         onEdit={() => {
-          handleModalClose('detail');
-          handleModalOpen('edit', selectedCOI);
+          handleModalClose("detail");
+          handleModalOpen("edit", selectedCOI);
         }}
       />
 
       <BulkReminderModal
         isOpen={modalState.bulkReminder}
-        onClose={() => handleModalClose('bulkReminder')}
+        onClose={() => handleModalClose("bulkReminder")}
         selectedIds={selectedRows}
       />
 
       <ReminderActionModal
         isOpen={modalState.reminderAction}
-        onClose={() => handleModalClose('reminderAction')}
+        onClose={() => handleModalClose("reminderAction")}
         coi={selectedCOI}
       />
     </div>
