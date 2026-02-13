@@ -1141,7 +1141,6 @@ export default function Table() {
                         <span className="font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D]">
                           Expiry Date
                         </span>
-
                         <div className="flex flex-col ml-3">
                           <span className="text-[10px] leading-none cursor-pointer text-[#666E6D]">
                             ▲
