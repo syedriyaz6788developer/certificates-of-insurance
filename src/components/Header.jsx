@@ -161,7 +161,7 @@ export default function Header({ setIsOpen, isMobileView }) {
 
           <IconButton
             icon={<img src="/icons/Shape.svg" alt="" className="w-5 h-5" />}
-            className="hidden lg:flex bg-[#F3F4F4] border-gray-200 text-[#2C3635] hover:text-gray-900 font-inter font-medium text-[14px] leading-[20px] tracking-[-0.6%] text-center"
+            className="hidden lg:flex bg-[#F3F4F4] border-gray-200  text-[#2C3635] hover:text-gray-900 font-inter font-medium text-[14px] leading-[20px] tracking-[-0.6%] text-center"
           >
             Ask LegalGraph AI
           </IconButton>
