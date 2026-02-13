@@ -416,10 +416,10 @@ export default function Table() {
   const tableContainerRef = useRef(null);
   const isFirstRender = useRef(true);
 
-  // Check for mobile/tablet view - Updated for iPad
+  
   useEffect(() => {
     const checkMobileView = () => {
-      setIsMobileView(window.innerWidth < 1024); // Changed from 768 to 1024 for iPad
+      setIsMobileView(window.innerWidth < 1024); 
     };
 
     checkMobileView();
@@ -427,7 +427,7 @@ export default function Table() {
     return () => window.removeEventListener("resize", checkMobileView);
   }, []);
 
-  // Initial data fetch
+  
   useEffect(() => {
     const loadInitialData = async () => {
       try {
@@ -1111,309 +1111,301 @@ export default function Table() {
             </div>
           ) : (
             /* Desktop/Tablet Table View - Optimized for iPad */
-            <div className="overflow-x-auto -mx-3 px-3">
-              <table className="w-full text-sm text-left border-collapse min-w-[900px] lg:min-w-full">
-                <thead className="text-xs bg-[#eff1f1] border-y">
-                  <tr>
-                    <th className="w-10 p-4 sticky left-0 bg-[#eff1f1] z-10">
-                      <input
-                        type="checkbox"
-                        checked={selectAll}
-                        onChange={handleSelectAll}
-                        disabled={loading || paginatedData.length === 0}
-                        className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-50"
-                      />
-                    </th>
-                    <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[120px]">
-                      Property
-                    </th>
-                    <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[120px]">
-                      Tenant Name
-                    </th>
-                    <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[80px]">
-                      Unit
-                    </th>
-                    <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[120px]">
-                      COI Name
-                    </th>
-                    <th className="px-4 py-3 min-w-[120px]">
-                      <div className="flex items-center ">
-                        <span className="font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D]">
-                          Expiry Date
-                        </span>
-                        <div className="flex flex-col ml-3">
-                          <span className="text-[10px] leading-none cursor-pointer text-[#666E6D]">
-                            ▲
-                          </span>
-                          <span className="text-[10px] leading-none cursor-pointer text-[#666E6D]">
-                            ▼
-                          </span>
-                        </div>
-                      </div>
-                    </th>
-                    <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[150px]">
-                      Status
-                    </th>
-                    <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[140px]">
-                      Reminder status
-                    </th>
-                    <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[80px] sticky right-0 bg-[#eff1f1] z-10">
-                      Action
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody className="divide-y divide-gray-200">
-                  {loading && paginatedData.length === 0 ? (
-                    [...Array(5)].map((_, index) => (
-                      <TableRowSkeleton key={index} />
-                    ))
-                  ) : paginatedData.length > 0 ? (
-                    paginatedData.map((item, index) => {
-                      const reminderStatus = getReminderStatus(item);
-
-                      return (
-                        <tr
-                          key={item.id}
-                          className={`hover:bg-gray-50 transition cursor-pointer ${
-                            selectedRows.includes(item.id)
-                              ? "bg-blue-50/50"
-                              : ""
-                          } ${loading ? "opacity-50 pointer-events-none" : ""}`}
-                          onClick={() => handleRowClick(item)}
-                        >
-                          <td
-                            className="p-4 sticky left-0 bg-white z-10"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={selectedRows.includes(item.id)}
-                              onChange={() => handleSelectRow(item.id)}
-                              className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                              disabled={loading}
-                            />
-                          </td>
-
-                          <td
-                            className="px-4 py-3 truncate font-inter-display font-normal text-[14px] leading-[20px] tracking-normal text-[#4F5857]"
-                            title={item.property}
-                          >
-                            {truncateText(item.property, 20)}
-                          </td>
-
-                          <td
-                            className="px-4 py-3 truncate font-inter-display font-normal text-[14px] leading-[20px] tracking-normal text-[#4F5857]"
-                            title={item.tenantName}
-                          >
-                            {truncateText(item.tenantName, 20)}
-                          </td>
-
-                          <td
-                            className="px-4 py-3 truncate font-inter-display font-normal text-[14px] leading-[20px] tracking-normal text-[#4F5857]"
-                            title={item.unit}
-                          >
-                            {item.unit || "—"}
-                          </td>
-
-                          <td
-                            className="px-4 py-3 truncate font-inter-display font-normal text-[14px] leading-[20px] tracking-normal text-[#4F5857]"
-                            title={item.coiName}
-                          >
-                            {truncateText(item.coiName, 20)}
-                          </td>
-
-                          <td className="px-4 py-3 whitespace-nowrap">
-                            <div className="flex items-center gap-2">
-                              <span className="text-gray-700">
-                                {formatDate(item.expiryDate)}
-                              </span>
-                              <button
-                                onClick={(e) => handleExpiryEdit(e, item.id)}
-                                className="p-1 hover:bg-gray-100 rounded"
-                              >
-                                <Pencil
-                                  size={14}
-                                  className="text-gray-400 hover:text-blue-600"
-                                />
-                              </button>
-                            </div>
-                          </td>
-
-                          <td
-                            className="px-4 py-3"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            {statusEditId === item.id ? (
-                              <div
-                                ref={statusSelectRef}
-                                className="relative z-20 w-[130px]"
-                              >
-                                <Select
-                                  value={item.status}
-                                  onChange={(e) =>
-                                    handleStatusChange(e, item.id)
-                                  }
-                                  options={STATUS_OPTIONS}
-                                  className="w-full text-sm border-2 border-blue-500"
-                                  autoFocus
-                                  disabled={loading}
-                                />
-                              </div>
-                            ) : (
-                              <div
-                                onClick={() =>
-                                  !loading && setStatusEditId(item.id)
-                                }
-                              >
-                                <StatusDropdown
-                                  value={item.status}
-                                  onChange={(e) =>
-                                    handleStatusChange(e, item.id)
-                                  }
-                                  onClick={(e) => e.stopPropagation()}
-                                />
-                              </div>
-                            )}
-                          </td>
-
-                          <td
-                            className="px-4 py-3"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <div className="flex items-center gap-2">
-                              <span
-                                className={`inline-block px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${getReminderStatusClass(reminderStatus)}`}
-                              >
-                                {reminderStatus}
-                              </span>
-                              {reminderStatus === "Not Sent" &&
-                                item.expiryDate && (
-                                  <button
-                                    onClick={() => handleSendReminder(item)}
-                                    className="p-1 hover:bg-gray-100 rounded transition flex-shrink-0"
-                                    title="Send reminder"
-                                    disabled={loading}
-                                  >
-                                    <Send size={14} className="text-gray-500" />
-                                  </button>
-                                )}
-                            </div>
-                          </td>
-
-                          <td
-                            className="px-4 py-3 sticky right-0 bg-white z-10"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <div className="relative flex justify-center">
-                              <button
-                                className="p-2 hover:bg-gray-100 rounded-lg transition-colors border border-gray-200 shadow-sm bg-white"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setActionMenuId(
-                                    actionMenuId === item.id ? null : item.id,
-                                  );
-                                  setSelectedCOI(item);
-                                }}
-                                disabled={loading}
-                              >
-                                <MoreVertical
-                                  size={18}
-                                  className="text-gray-700"
-                                />
-                              </button>
-
-                              {actionMenuId === item.id && (
-                                <>
-                                  <div
-                                    className="fixed inset-0 z-[9998]"
-                                    onClick={() => setActionMenuId(null)}
-                                  />
-                                  <div
-                                    ref={actionMenuRef}
-                                    className="absolute right-0 top-full mt-1 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-[9999]"
-                                  >
-                                    <button
-                                      className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50 flex items-center gap-3 text-gray-700"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        setActionMenuId(null);
-                                        handleModalOpen("edit", item);
-                                      }}
-                                    >
-                                      <Pencil
-                                        size={16}
-                                        className="text-gray-600"
-                                      />
-                                      <span>Edit COI</span>
-                                    </button>
-                                    <button
-                                      className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50 flex items-center gap-3 text-red-600"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleDeleteCOI(item.id);
-                                      }}
-                                    >
-                                      <Trash2 size={16} />
-                                      <span>Delete COI</span>
-                                    </button>
-                                    <button
-                                      className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50 flex items-center gap-3 text-gray-700"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        setActionMenuId(null);
-                                        handleSendReminder(item);
-                                      }}
-                                      disabled={
-                                        reminderStatus === "Sent" ||
-                                        reminderStatus.includes("Sent")
-                                      }
-                                    >
-                                      <Send size={16} />
-                                      <span>Send Reminder</span>
-                                    </button>
-                                  </div>
-                                </>
-                              )}
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })
-                  ) : (
-                    <tr>
-                      <td
-                        colSpan={9}
-                        className="px-4 py-8 text-center text-gray-500"
-                      >
-                        <div className="flex flex-col items-center gap-2">
-                          <span>No COI records found</span>
-                          {filters.property ||
-                          filters.status ||
-                          filters.expiryFilter !== "all" ||
-                          filters.searchTerm ? (
-                            <button
-                              onClick={handleClearFilters}
-                              className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-                            >
-                              Clear all filters
-                            </button>
-                          ) : (
-                            <button
-                              onClick={() => handleModalOpen("add")}
-                              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium"
-                            >
-                              <Plus size={18} />
-                              Add Your First COI
-                            </button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+         
+<div className="overflow-x-auto -mx-3 px-3">
+  <table className="w-full text-sm text-left border-collapse min-w-[900px] lg:min-w-full">
+    <thead className="text-xs bg-[#f1f3f3]">
+      <tr>
+        <th className="w-10 p-4 sticky left-0 bg-[#eff1f1] z-10 border-r border-gray-200">
+          <input
+            type="checkbox"
+            checked={selectAll}
+            onChange={handleSelectAll}
+            disabled={loading || paginatedData.length === 0}
+            className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-50"
+          />
+        </th>
+        <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[120px] border-r border-gray-200">
+          Property
+        </th>
+        <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[120px] border-r border-gray-200">
+          Tenant Name
+        </th>
+        <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[80px] border-r border-gray-200">
+          Unit
+        </th>
+        <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[120px] border-r border-gray-200">
+          COI Name
+        </th>
+        <th className="px-4 py-3 min-w-[120px] border-r border-gray-200">
+          <div className="flex items-center">
+            <span className="font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D]">
+              Expiry Date
+            </span>
+            <div className="flex flex-col ml-3">
+              <span className="text-[8px] leading-none cursor-pointer text-[#666E6D]">
+                ▲
+              </span>
+              <span className="text-[8px] leading-none cursor-pointer text-[#666E6D]">
+                ▼
+              </span>
             </div>
+          </div>
+        </th>
+        <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[150px] border-r border-gray-200">
+          Status
+        </th>
+        <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[140px] border-r border-gray-200">
+          Reminder status
+        </th>
+        <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[80px] sticky right-0 bg-[#eff1f1] z-10">
+          Action
+        </th>
+      </tr>
+    </thead>
+
+    <tbody className="divide-y divide-gray-200">
+      {loading && paginatedData.length === 0 ? (
+        [...Array(5)].map((_, index) => (
+          <TableRowSkeleton key={index} />
+        ))
+      ) : paginatedData.length > 0 ? (
+        paginatedData.map((item, index) => {
+          const reminderStatus = getReminderStatus(item);
+
+          return (
+            <tr
+              key={item.id}
+              className={`hover:bg-gray-50 transition cursor-pointer ${
+                selectedRows.includes(item.id) ? "bg-blue-50/50" : ""
+              } ${loading ? "opacity-50 pointer-events-none" : ""}`}
+              onClick={() => handleRowClick(item)}
+            >
+              <td
+                className="p-4 sticky left-0 bg-white z-10 border-r border-gray-200"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedRows.includes(item.id)}
+                  onChange={() => handleSelectRow(item.id)}
+                  className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  disabled={loading}
+                />
+              </td>
+
+              <td
+                className="px-4 py-3 truncate font-inter-display font-normal text-[14px] leading-[20px] tracking-normal text-[#4F5857] border-r border-gray-200"
+                title={item.property}
+              >
+                {truncateText(item.property, 20)}
+              </td>
+
+              <td
+                className="px-4 py-3 truncate font-inter-display font-normal text-[14px] leading-[20px] tracking-normal text-[#4F5857] border-r border-gray-200"
+                title={item.tenantName}
+              >
+                {truncateText(item.tenantName, 20)}
+              </td>
+
+              <td
+                className="px-4 py-3 truncate font-inter-display font-normal text-[14px] leading-[20px] tracking-normal text-[#4F5857] border-r border-gray-200"
+                title={item.unit}
+              >
+                {item.unit || "—"}
+              </td>
+
+              <td
+                className="px-4 py-3 truncate font-inter-display font-normal text-[14px] leading-[20px] tracking-normal text-[#4F5857] border-r border-gray-200"
+                title={item.coiName}
+              >
+                {truncateText(item.coiName, 20)}
+              </td>
+
+              <td className="px-4 py-3 whitespace-nowrap border-r border-gray-200">
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-700">
+                    {formatDate(item.expiryDate)}
+                  </span>
+                  <button
+                    onClick={(e) => handleExpiryEdit(e, item.id)}
+                    className="p-1 hover:bg-gray-100 rounded"
+                  >
+                    <Pencil
+                      size={14}
+                      className="text-gray-400 hover:text-blue-600"
+                    />
+                  </button>
+                </div>
+              </td>
+
+              <td
+                className="px-4 py-3 border-r border-gray-200"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {statusEditId === item.id ? (
+                  <div
+                    ref={statusSelectRef}
+                    className="relative z-20 w-[130px]"
+                  >
+                    <Select
+                      value={item.status}
+                      onChange={(e) => handleStatusChange(e, item.id)}
+                      options={STATUS_OPTIONS}
+                      className="w-full text-sm border-2 border-blue-500"
+                      autoFocus
+                      disabled={loading}
+                    />
+                  </div>
+                ) : (
+                  <div
+                    onClick={() => !loading && setStatusEditId(item.id)}
+                  >
+                    <StatusDropdown
+                      value={item.status}
+                      onChange={(e) => handleStatusChange(e, item.id)}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </div>
+                )}
+              </td>
+
+              <td
+                className="px-4 py-3 border-r border-gray-200"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="flex items-center gap-2">
+                  <span
+                    className={`inline-block px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${getReminderStatusClass(reminderStatus)}`}
+                  >
+                    {reminderStatus}
+                  </span>
+                  {reminderStatus === "Not Sent" && item.expiryDate && (
+                    <button
+                      onClick={() => handleSendReminder(item)}
+                      className="p-1 hover:bg-gray-100 rounded transition flex-shrink-0"
+                      title="Send reminder"
+                      disabled={loading}
+                    >
+                      <Send size={14} className="text-gray-500" />
+                    </button>
+                  )}
+                </div>
+              </td>
+
+              <td
+                className="px-4 py-3 sticky right-0 bg-white z-10"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="relative flex justify-center">
+                  <button
+                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors border border-gray-200 shadow-sm bg-white"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActionMenuId(
+                        actionMenuId === item.id ? null : item.id,
+                      );
+                      setSelectedCOI(item);
+                    }}
+                    disabled={loading}
+                  >
+                    <MoreVertical
+                      size={18}
+                      className="text-gray-700"
+                    />
+                  </button>
+
+                  {actionMenuId === item.id && (
+                    <>
+                      <div
+                        className="fixed inset-0 z-[9998]"
+                        onClick={() => setActionMenuId(null)}
+                      />
+                      <div
+                        ref={actionMenuRef}
+                        className="absolute right-0 top-full mt-1 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-[9999]"
+                      >
+                        <button
+                          className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50 flex items-center gap-3 text-gray-700"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setActionMenuId(null);
+                            handleModalOpen("edit", item);
+                          }}
+                        >
+                          <Pencil
+                            size={16}
+                            className="text-gray-600"
+                          />
+                          <span>Edit COI</span>
+                        </button>
+                        <button
+                          className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50 flex items-center gap-3 text-red-600"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteCOI(item.id);
+                          }}
+                        >
+                          <Trash2 size={16} />
+                          <span>Delete COI</span>
+                        </button>
+                        <button
+                          className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50 flex items-center gap-3 text-gray-700"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setActionMenuId(null);
+                            handleSendReminder(item);
+                          }}
+                          disabled={
+                            reminderStatus === "Sent" ||
+                            reminderStatus.includes("Sent")
+                          }
+                        >
+                          <Send size={16} />
+                          <span>Send Reminder</span>
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </td>
+            </tr>
+          );
+        })
+      ) : (
+        <tr>
+          <td
+            colSpan={9}
+            className="px-4 py-8 text-center text-gray-500 border-r border-gray-200"
+          >
+            <div className="flex flex-col items-center gap-2">
+              <span>No COI records found</span>
+              {filters.property ||
+              filters.status ||
+              filters.expiryFilter !== "all" ||
+              filters.searchTerm ? (
+                <button
+                  onClick={handleClearFilters}
+                  className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                >
+                  Clear all filters
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleModalOpen("add")}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm font-medium"
+                >
+                  <Plus size={18} />
+                  Add Your First COI
+                </button>
+              )}
+            </div>
+          </td>
+        </tr>
+      )}
+    </tbody>
+  </table>
+</div>
           )}
         </div>
 
