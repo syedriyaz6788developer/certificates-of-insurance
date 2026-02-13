@@ -1,4 +1,70 @@
 # React + Vite
+ Certificates of Insurance (COI) Review Dashboard
+Certificate of Insurance (COI) Review Dashboard application that allows users to:
+View certificates of insurance
+
+
+Create new COIs
+
+
+Manage property and tenant insurance records
+
+
+Review and update certificate status
+Add new properties
+
+
+The application is fully deployed on AWS Cloud with CI/CD integration, uses Redux Toolkit for state management, and is fully responsive across all devices.
+
+ Live Deployment
+Deployed on AWS Cloud using CI/CD pipeline.
+http://certificate-insurance-bucket.s3-website.ap-south-1.amazonaws.com/
+Tech Stack
+Frontend
+React.js (vite)
+
+
+ React Router
+
+
+ Redux Toolkit (State Management)
+
+
+ Tailwind CSS (Responsive UI)
+
+
+
+
+
+
+Cloud & DevOps
+ AWS (Deployment)
+
+
+ CI/CD Integration (AWS Pipeline / Buildspec)
+
+
+
+Project Structure
+certificates-of-insurance/
+│
+├── src/         # React Frontend
+├── 
+├── buildspec.yml   # CI/CD configuration
+└── README.md
+
+
+ How to Clone and Run Locally
+Clone the Repository
+-- git clone https://github.com/syedriyaz6788developer/certificates-of-insurance.git
+-- cd dir_name
+  Run
+--npm run dev
+
+
+http://localhost:5173/coi-dashboard
+
+
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
