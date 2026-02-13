@@ -63,9 +63,23 @@ const EXPIRY_FILTER_OPTIONS = [
 const MobileCOICard = ({ item, selectedRows, handleSelectRow, handleRowClick, handleStatusChange, statusEditId, setStatusEditId, handleExpiryEdit, handleSendReminder, getReminderStatus, getReminderStatusClass, formatDate, truncateText, loading, actionMenuId, setActionMenuId, setSelectedCOI, handleDeleteCOI, selectedCOI }) => {
   const reminderStatus = getReminderStatus(item);
   const [showActions, setShowActions] = useState(false);
+  const actionMenuRef = useRef(null);
+  
+  // Handle click outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (actionMenuRef.current && !actionMenuRef.current.contains(event.target)) {
+        setShowActions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
   
   return (
-    <div className={`bg-white rounded-lg border border-gray-200 p-4 mb-3 shadow-sm ${selectedRows.includes(item.id) ? 'bg-blue-50/50 border-blue-200' : ''}`}>
+    <div className={`bg-white rounded-lg border border-gray-200 p-4 mb-3 shadow-sm ${
+      selectedRows.includes(item.id) ? 'bg-blue-50/50 border-blue-200' : ''
+    }`}>
       {/* Checkbox and Actions Row */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-3">
@@ -74,7 +88,7 @@ const MobileCOICard = ({ item, selectedRows, handleSelectRow, handleRowClick, ha
             checked={selectedRows.includes(item.id)}
             onChange={() => handleSelectRow(item.id)}
             onClick={(e) => e.stopPropagation()}
-            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
             disabled={loading}
           />
           <span className={`px-2 py-1 rounded-full text-xs font-medium ${getReminderStatusClass(reminderStatus)}`}>
@@ -83,14 +97,14 @@ const MobileCOICard = ({ item, selectedRows, handleSelectRow, handleRowClick, ha
         </div>
         <div className="relative">
           <button 
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors border border-gray-200 bg-white shadow-sm"
             onClick={(e) => {
               e.stopPropagation();
               setShowActions(!showActions);
             }}
             disabled={loading}
           >
-            <MoreVertical size={18} className="text-gray-600" />
+            <MoreVertical size={20} className="text-gray-700" />
           </button>
           
           {showActions && (
@@ -99,9 +113,12 @@ const MobileCOICard = ({ item, selectedRows, handleSelectRow, handleRowClick, ha
                 className="fixed inset-0 z-[9998]" 
                 onClick={() => setShowActions(false)}
               />
-              <div className="absolute right-0 top-full mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-[9999]">
+              <div 
+                ref={actionMenuRef}
+                className="absolute right-0 top-full mt-1 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-[9999]"
+              >
                 <button
-                  className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50 flex items-center gap-2 text-gray-700"
+                  className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50 flex items-center gap-3 text-gray-700"
                   onClick={(e) => {
                     e.stopPropagation();
                     setShowActions(false);
@@ -109,10 +126,10 @@ const MobileCOICard = ({ item, selectedRows, handleSelectRow, handleRowClick, ha
                   }}
                 >
                   <Pencil size={16} className="text-gray-600" />
-                  View Details
+                  <span>View Details</span>
                 </button>
                 <button
-                  className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50 flex items-center gap-2 text-red-600"
+                  className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50 flex items-center gap-3 text-red-600"
                   onClick={(e) => {
                     e.stopPropagation();
                     setShowActions(false);
@@ -120,11 +137,11 @@ const MobileCOICard = ({ item, selectedRows, handleSelectRow, handleRowClick, ha
                   }}
                 >
                   <Trash2 size={16} />
-                  Delete COI
+                  <span>Delete COI</span>
                 </button>
                 {reminderStatus === "Not Sent" && item.expiryDate && (
                   <button
-                    className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50 flex items-center gap-2 text-gray-700"
+                    className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50 flex items-center gap-3 text-gray-700"
                     onClick={(e) => {
                       e.stopPropagation();
                       setShowActions(false);
@@ -132,7 +149,7 @@ const MobileCOICard = ({ item, selectedRows, handleSelectRow, handleRowClick, ha
                     }}
                   >
                     <Send size={16} />
-                    Send Reminder
+                    <span>Send Reminder</span>
                   </button>
                 )}
               </div>
@@ -145,24 +162,27 @@ const MobileCOICard = ({ item, selectedRows, handleSelectRow, handleRowClick, ha
       <div className="space-y-3" onClick={() => handleRowClick(item)}>
         <div className="flex flex-wrap items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 truncate">{item.tenantName || "N/A"}</p>
-            <p className="text-xs text-gray-500 truncate">{item.property || "N/A"} {item.unit ? `- ${item.unit}` : ''}</p>
+            <p className="text-base font-semibold text-gray-900 truncate">{item.tenantName || "N/A"}</p>
+            <p className="text-sm text-gray-600 truncate">{item.property || "N/A"} {item.unit ? `- ${item.unit}` : ''}</p>
           </div>
           <div className="flex-shrink-0">
-            <span className="text-xs text-gray-500">COI: {truncateText(item.coiName, 15)}</span>
+            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+              COI: {truncateText(item.coiName, 15)}
+            </span>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-4">
           <div>
             <p className="text-xs text-gray-500 mb-1">Expiry Date</p>
             <div className="flex items-center gap-2">
-              <span className="text-sm">{formatDate(item.expiryDate)}</span>
-              <Pencil 
-                size={14} 
-                className="cursor-pointer hover:text-blue-600 flex-shrink-0 text-gray-400"
+              <span className="text-sm font-medium">{formatDate(item.expiryDate)}</span>
+              <button
                 onClick={(e) => handleExpiryEdit(e, item.id)}
-              />
+                className="p-1 hover:bg-gray-100 rounded"
+              >
+                <Pencil size={14} className="text-gray-500" />
+              </button>
             </div>
           </div>
           
@@ -193,7 +213,7 @@ const MobileCOICard = ({ item, selectedRows, handleSelectRow, handleRowClick, ha
               e.stopPropagation();
               handleSendReminder(item);
             }}
-            className="w-full mt-2 px-3 py-2 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium flex items-center justify-center gap-2 hover:bg-blue-100 transition"
+            className="w-full mt-2 px-4 py-3 bg-blue-600 text-white rounded-lg text-sm font-medium flex items-center justify-center gap-2 hover:bg-blue-700 transition"
             disabled={loading}
           >
             <Send size={16} />
@@ -258,31 +278,31 @@ const StatusDropdown = ({ value, onChange, onClick }) => {
 // Skeleton Components
 const TableRowSkeleton = () => (
   <tr className="hover:bg-gray-50/50">
-    <td className="p-4 w-10">
+    <td className="p-4 w-10 sticky left-0 bg-white z-10">
       <Skeleton width={16} height={16} />
     </td>
-    <td className="px-4 py-3 w-[150px]">
+    <td className="px-4 py-3 min-w-[120px]">
       <Skeleton height={20} />
     </td>
-    <td className="px-4 py-3 w-[150px]">
+    <td className="px-4 py-3 min-w-[120px]">
       <Skeleton height={20} />
     </td>
-    <td className="px-4 py-3 w-[100px]">
+    <td className="px-4 py-3 min-w-[80px]">
       <Skeleton height={20} />
     </td>
-    <td className="px-4 py-3 w-[150px]">
+    <td className="px-4 py-3 min-w-[120px]">
       <Skeleton height={20} />
     </td>
-    <td className="px-4 py-3 w-[130px]">
+    <td className="px-4 py-3 min-w-[120px]">
       <Skeleton height={20} />
     </td>
-    <td className="px-4 py-3 w-[140px]">
+    <td className="px-4 py-3 min-w-[150px]">
       <Skeleton height={20} />
     </td>
-    <td className="px-4 py-3 w-[120px]">
+    <td className="px-4 py-3 min-w-[140px]">
       <Skeleton height={20} />
     </td>
-    <td className="px-4 py-3 w-10">
+    <td className="px-4 py-3 min-w-[80px] sticky right-0 bg-white z-10">
       <Skeleton height={20} width={20} />
     </td>
   </tr>
@@ -295,30 +315,12 @@ const MobileCardSkeleton = () => (
       <Skeleton width={80} height={24} />
     </div>
     <div className="space-y-3">
-      <Skeleton height={20} />
-      <Skeleton height={16} width="60%" />
+      <Skeleton height={24} />
+      <Skeleton height={20} width="60%" />
       <div className="grid grid-cols-2 gap-3">
-        <Skeleton height={32} />
-        <Skeleton height={32} />
+        <Skeleton height={40} />
+        <Skeleton height={40} />
       </div>
-    </div>
-  </div>
-);
-
-const FilterSkeleton = () => (
-  <div className="flex flex-col sm:flex-row flex-wrap gap-3 w-full lg:w-auto">
-    <Skeleton height={38} width={140} />
-    <Skeleton height={38} width={140} />
-    <Skeleton height={38} width={140} />
-  </div>
-);
-
-const ActionButtonsSkeleton = () => (
-  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto lg:flex-shrink-0">
-    <Skeleton height={38} width={280} />
-    <div className="flex gap-3">
-      <Skeleton height={38} width={38} circle />
-      <Skeleton height={38} width={100} />
     </div>
   </div>
 );
@@ -361,10 +363,10 @@ export default function Table() {
   const tableContainerRef = useRef(null);
   const isFirstRender = useRef(true);
 
-  // Check for mobile view
+  // Check for mobile/tablet view - Updated for iPad
   useEffect(() => {
     const checkMobileView = () => {
-      setIsMobileView(window.innerWidth < 768);
+      setIsMobileView(window.innerWidth < 1024); // Changed from 768 to 1024 for iPad
     };
     
     checkMobileView();
@@ -674,7 +676,7 @@ export default function Table() {
 
   // Mobile Filters Component
   const MobileFilters = () => (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 md:hidden">
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 lg:hidden">
       <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-xl p-4 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold">Filters</h3>
@@ -687,19 +689,19 @@ export default function Table() {
         </div>
         
         <div className="space-y-4">
-        <div>
-  <label className="font-inter-display font-normal text-[14px] leading-[20px] tracking-normal text-center text-[#2C3635] mb-1 block">
-    Property
-  </label>
-  <Select
-    placeholder="All Properties"
-    value={filters.property}
-    onChange={(e) => dispatch(setPropertyFilter(e.target.value))}
-    options={[{ label: "All Properties", value: "" }, ...propertyOptions]}
-    className="w-full font-inter-display font-normal text-[14px] leading-[20px] tracking-normal text-center text-[#2C3635]"
-    disabled={loading}
-  />
-</div>
+          <div>
+            <label className="font-inter-display font-normal text-[14px] leading-[20px] tracking-normal text-center text-[#2C3635] mb-1 block">
+              Property
+            </label>
+            <Select
+              placeholder="All Properties"
+              value={filters.property}
+              onChange={(e) => dispatch(setPropertyFilter(e.target.value))}
+              options={[{ label: "All Properties", value: "" }, ...propertyOptions]}
+              className="w-full font-inter-display font-normal text-[14px] leading-[20px] tracking-normal text-center text-[#2C3635]"
+              disabled={loading}
+            />
+          </div>
           
           <div>
             <label className="text-sm font-medium text-gray-700 mb-1 block">Status</label>
@@ -741,14 +743,14 @@ export default function Table() {
     return (
       <div className="w-full max-w-full overflow-hidden">
         <div className="relative shadow rounded-md border border-gray-200 bg-white">
-          {/* Header with Filter Skeletons - Fixed Layout */}
+          {/* Header with Filter Skeletons */}
           <div className="p-3 sm:p-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 border-b">
-            <div className="hidden md:flex flex-row flex-wrap items-center gap-3">
+            <div className="hidden lg:flex flex-row flex-wrap items-center gap-3">
               <Skeleton height={38} width={140} />
               <Skeleton height={38} width={140} />
               <Skeleton height={38} width={140} />
             </div>
-            <div className="flex md:hidden w-full">
+            <div className="flex lg:hidden w-full">
               <Skeleton height={38} width="100%" />
             </div>
             <div className="flex flex-row items-center gap-3 lg:flex-shrink-0">
@@ -769,35 +771,35 @@ export default function Table() {
                 ))}
               </div>
             ) : (
-              <div className="min-w-[1000px] lg:min-w-full overflow-x-auto">
-                <table className="w-full text-sm text-left border-collapse table-fixed">
-                  <thead className="text-xs bg-gray-50 border-y">
+              <div className="overflow-x-auto -mx-3 px-3">
+                <table className="w-full text-sm text-left border-collapse min-w-[900px]">
+                  <thead className="text-xs bg-[#eff1f1] border-y">
                     <tr>
-                      <th className="w-10 p-4">
+                      <th className="w-10 p-4 sticky left-0 bg-[#eff1f1] z-10">
                         <Skeleton width={16} height={16} />
                       </th>
-                      <th className="px-4 py-3 w-[150px]">
+                      <th className="px-4 py-3 min-w-[120px]">
                         <Skeleton width={80} height={16} />
                       </th>
-                      <th className="px-4 py-3 w-[150px]">
+                      <th className="px-4 py-3 min-w-[120px]">
                         <Skeleton width={90} height={16} />
                       </th>
-                      <th className="px-4 py-3 w-[100px]">
+                      <th className="px-4 py-3 min-w-[80px]">
                         <Skeleton width={60} height={16} />
                       </th>
-                      <th className="px-4 py-3 w-[150px]">
+                      <th className="px-4 py-3 min-w-[120px]">
                         <Skeleton width={80} height={16} />
                       </th>
-                      <th className="px-4 py-3 w-[130px]">
+                      <th className="px-4 py-3 min-w-[120px]">
                         <Skeleton width={90} height={16} />
                       </th>
-                      <th className="px-4 py-3 w-[140px]">
+                      <th className="px-4 py-3 min-w-[150px]">
                         <Skeleton width={70} height={16} />
                       </th>
-                      <th className="px-4 py-3 w-[120px]">
+                      <th className="px-4 py-3 min-w-[140px]">
                         <Skeleton width={80} height={16} />
                       </th>
-                      <th className="w-10 px-4 py-3">
+                      <th className="px-4 py-3 min-w-[80px] sticky right-0 bg-[#eff1f1] z-10">
                         <Skeleton width={16} height={16} />
                       </th>
                     </tr>
@@ -831,94 +833,95 @@ export default function Table() {
     <div className="w-full max-w-full overflow-hidden">
       <div className="relative shadow rounded-md border border-gray-200 bg-white">
         
-   <div className="p-3 flex flex-col lg:flex-row lg:items-center gap-4 border-b">
-  {/* Desktop Filters - Left side */}
-  <div className="hidden md:flex flex-row items-center gap-3">
-    <Select
-      placeholder="All Properties"
-      value={filters.property}
-      onChange={(e) => dispatch(setPropertyFilter(e.target.value))}
-      options={[{ label: "All Properties", value: "" }, ...propertyOptions]}
-      className="w-[140px] lg:w-[150px] font-inter-display font-normal text-[14px] leading-[20px] tracking-normal  text-[#2C3635]"
-      disabled={loading}
-    />
-    <Select
-      placeholder="Status"
-      value={filters.status}
-      onChange={(e) => dispatch(setStatusFilter(e.target.value))}
-      options={[{ label: "All Status", value: "" }, ...STATUS_OPTIONS]}
-      className="w-[120px] lg:w-[130px] font-inter-display font-normal text-[14px] leading-[20px] tracking-normal  text-[#4F5857]"
-      disabled={loading}
-    />
-    <Select
-      placeholder="Filter by Expiry"
-      value={filters.expiryFilter}
-      onChange={(e) => dispatch(setExpiryFilter(e.target.value))}
-      options={EXPIRY_FILTER_OPTIONS}
-      className="w-[140px] lg:w-[160px] font-inter-display font-normal text-[14px] leading-[20px] tracking-normal  text-[#4F5857]"
-      disabled={loading}
-    />
-  </div>
+        {/* Header Section */}
+        <div className="p-3 flex flex-col lg:flex-row lg:items-center gap-4 border-b">
+          {/* Desktop Filters - Left side */}
+          <div className="hidden lg:flex flex-row items-center gap-3">
+            <Select
+              placeholder="All Properties"
+              value={filters.property}
+              onChange={(e) => dispatch(setPropertyFilter(e.target.value))}
+              options={[{ label: "All Properties", value: "" }, ...propertyOptions]}
+              className="w-[140px] lg:w-[150px] font-inter-display font-normal text-[14px] leading-[20px] tracking-normal text-[#2C3635]"
+              disabled={loading}
+            />
+            <Select
+              placeholder="Status"
+              value={filters.status}
+              onChange={(e) => dispatch(setStatusFilter(e.target.value))}
+              options={[{ label: "All Status", value: "" }, ...STATUS_OPTIONS]}
+              className="w-[120px] lg:w-[130px] font-inter-display font-normal text-[14px] leading-[20px] tracking-normal text-[#4F5857]"
+              disabled={loading}
+            />
+            <Select
+              placeholder="Filter by Expiry"
+              value={filters.expiryFilter}
+              onChange={(e) => dispatch(setExpiryFilter(e.target.value))}
+              options={EXPIRY_FILTER_OPTIONS}
+              className="w-[140px] lg:w-[160px] font-inter-display font-normal text-[14px] leading-[20px] tracking-normal text-[#4F5857]"
+              disabled={loading}
+            />
+          </div>
 
-  {/* Mobile Filter Button */}
-  <div className="flex md:hidden w-full">
-    <button
-      onClick={() => setShowMobileFilters(true)}
-      className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium"
-    >
-      <Filter size={18} />
-      Filters
-      {(filters.property || filters.status || filters.expiryFilter !== 'all') && (
-        <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
-      )}
-    </button>
-  </div>
+          {/* Mobile Filter Button */}
+          <div className="flex lg:hidden w-full">
+            <button
+              onClick={() => setShowMobileFilters(true)}
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium"
+            >
+              <Filter size={18} />
+              Filters
+              {(filters.property || filters.status || filters.expiryFilter !== 'all') && (
+                <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
+              )}
+            </button>
+          </div>
 
-  {/* Center spacer */}
-  <div className="flex-1"></div>
+          {/* Center spacer */}
+          <div className="flex-1"></div>
 
-  {/* Right side actions */}
-  <div className="flex flex-row items-center gap-3">
-    <div className="relative w-[200px] lg:w-[280px]">
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-      <input
-        type="text"
-        placeholder={isMobileView ? "Search..." : "Search by tenant, property or unit..."}
-        value={localSearchTerm}
-        onChange={handleSearchChange}
-        className="w-full pl-10 pr-8 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-inter-display font-normal text-[12px] leading-[16px] tracking-normal text-[#2C3635] placeholder:text-[#2C3635] disabled:opacity-50"
-        disabled={loading}
-      />
-      {localSearchTerm && (
-        <button
-          onClick={handleClearSearch}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-lg leading-none"
-        >
-          ×
-        </button>
-      )}
-      {loading && filters.searchTerm && (
-        <div className="absolute right-3 top-1/2 -translate-y-1/2">
-          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+          {/* Right side actions */}
+          <div className="flex flex-row items-center gap-3">
+            <div className="relative w-[200px] lg:w-[280px]">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <input
+                type="text"
+                placeholder={isMobileView ? "Search..." : "Search by tenant, property or unit..."}
+                value={localSearchTerm}
+                onChange={handleSearchChange}
+                className="w-full pl-10 pr-8 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-inter-display font-normal text-[12px] leading-[16px] tracking-normal text-[#2C3635] placeholder:text-[#2C3635] disabled:opacity-50"
+                disabled={loading}
+              />
+              {localSearchTerm && (
+                <button
+                  onClick={handleClearSearch}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-lg leading-none"
+                >
+                  ×
+                </button>
+              )}
+              {loading && filters.searchTerm && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-3 flex-shrink-0">
+              <button className="p-2 border rounded-lg hover:bg-gray-50 transition">
+                <Settings size={18} className="text-gray-600" />
+              </button>
+              <button
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-[#F9FAFA] rounded-lg hover:bg-blue-700 transition font-inter-display font-normal text-[14px] leading-[20px] tracking-normal text-center whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={() => handleModalOpen('add')}
+                disabled={loading}
+              >
+                <Plus size={18} />
+                {isMobileView ? 'ADD' : 'ADD COI'}
+              </button>
+            </div>
+          </div>
         </div>
-      )}
-    </div>
-
-    <div className="flex gap-3 flex-shrink-0">
-      <button className="p-2 border rounded-lg hover:bg-gray-50 transition">
-        <Settings size={18} className="text-gray-600" />
-      </button>
-    <button
-  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-[#F9FAFA] rounded-lg hover:bg-blue-700 transition font-inter-display font-normal text-[14px] leading-[20px] tracking-normal text-center whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
-  onClick={() => handleModalOpen('add')}
-  disabled={loading}
->
-  <Plus size={18} />
-  {isMobileView ? 'ADD' : 'ADD COI'}
-</button>
-    </div>
-  </div>
-</div>
 
         {/* Bulk Actions - Mobile Optimized */}
         {selectedRows.length > 0 && (
@@ -1009,28 +1012,28 @@ export default function Table() {
               )}
             </div>
           ) : (
-            /* Desktop Table View */
-            <div className="min-w-[1000px] lg:min-w-full overflow-x-auto">
-              <table className="w-full text-sm text-left border-collapse table-fixed">
+            /* Desktop/Tablet Table View - Optimized for iPad */
+            <div className="overflow-x-auto -mx-3 px-3">
+              <table className="w-full text-sm text-left border-collapse min-w-[900px] lg:min-w-full">
                 <thead className="text-xs bg-[#eff1f1] border-y">
                   <tr>
-                    <th className="w-10 p-4">
+                    <th className="w-10 p-4 sticky left-0 bg-[#eff1f1] z-10">
                       <input 
                         type="checkbox" 
                         checked={selectAll}
                         onChange={handleSelectAll}
                         disabled={loading || paginatedData.length === 0}
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-50"
+                        className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-50"
                       />
                     </th>
-                    <th className="px-4  py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] w-[120px]">Property</th>
-                    <th className="px-4  py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] w-[120px]">Tenant Name</th>
-                    <th className="px-4  py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] w-[120px]">Unit</th>
-                    <th className="px-4  py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] w-[120px]">COI Name</th>
-                    <th className="px-4  py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] w-[120px]">Expiry Date</th>
-                    <th className="px-4  py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] w-[200px]">Status</th>
-                    <th className="px-4  py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] w-[140px]">Reminder status</th>
-                    <th className=" py-3   font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] ">Action</th>
+                    <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[120px]">Property</th>
+                    <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[120px]">Tenant Name</th>
+                    <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[80px]">Unit</th>
+                    <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[120px]">COI Name</th>
+                    <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[120px]">Expiry Date</th>
+                    <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[150px]">Status</th>
+                    <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[140px]">Reminder status</th>
+                    <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[80px] sticky right-0 bg-[#eff1f1] z-10">Action</th>
                   </tr>
                 </thead>
 
@@ -1042,7 +1045,6 @@ export default function Table() {
                   ) : paginatedData.length > 0 ? (
                     paginatedData.map((item, index) => {
                       const reminderStatus = getReminderStatus(item);
-                      const isLastRow = index === paginatedData.length - 1;
                       
                       return (
                         <tr
@@ -1052,12 +1054,12 @@ export default function Table() {
                           } ${loading ? 'opacity-50 pointer-events-none' : ''}`}
                           onClick={() => handleRowClick(item)}
                         >
-                          <td className="p-4" onClick={(e) => e.stopPropagation()}>
+                          <td className="p-4 sticky left-0 bg-white z-10" onClick={(e) => e.stopPropagation()}>
                             <input 
                               type="checkbox" 
                               checked={selectedRows.includes(item.id)}
                               onChange={() => handleSelectRow(item.id)}
-                              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                              className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                               disabled={loading}
                             />
                           </td>
@@ -1081,17 +1083,18 @@ export default function Table() {
                           <td className="px-4 py-3 whitespace-nowrap">
                             <div className="flex items-center gap-2">
                               <span className="text-gray-700">{formatDate(item.expiryDate)}</span>
-                              <Pencil 
-                                size={14} 
-                                className="cursor-pointer hover:text-blue-600 flex-shrink-0 text-gray-400"
+                              <button
                                 onClick={(e) => handleExpiryEdit(e, item.id)}
-                              />
+                                className="p-1 hover:bg-gray-100 rounded"
+                              >
+                                <Pencil size={14} className="text-gray-400 hover:text-blue-600" />
+                              </button>
                             </div>
                           </td>
 
-                          <td className="px-4 py-3 " onClick={(e) => e.stopPropagation()}>
+                          <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
                             {statusEditId === item.id ? (
-                              <div ref={statusSelectRef} className="relative z-20  w-[130px]">
+                              <div ref={statusSelectRef} className="relative z-20 w-[130px]">
                                 <Select
                                   value={item.status}
                                   onChange={(e) => handleStatusChange(e, item.id)}
@@ -1130,10 +1133,10 @@ export default function Table() {
                             </div>
                           </td>
 
-                          <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                          <td className="px-4 py-3 sticky right-0 bg-white z-10" onClick={(e) => e.stopPropagation()}>
                             <div className="relative flex justify-center">
                               <button 
-                                className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+                                className="p-2 hover:bg-gray-100 rounded-lg transition-colors border border-gray-200 shadow-sm bg-white"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   setActionMenuId(actionMenuId === item.id ? null : item.id);
@@ -1141,7 +1144,7 @@ export default function Table() {
                                 }}
                                 disabled={loading}
                               >
-                                <MoreVertical size={16} className="text-gray-600" />
+                                <MoreVertical size={18} className="text-gray-700" />
                               </button>
                               
                               {actionMenuId === item.id && (
@@ -1152,10 +1155,10 @@ export default function Table() {
                                   />
                                   <div 
                                     ref={actionMenuRef}
-                                    className={`absolute ${isLastRow ? 'bottom-full mb-1' : 'top-full mt-1'} right-0 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-[9999]`}
+                                    className="absolute right-0 top-full mt-1 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-[9999]"
                                   >
                                     <button
-                                      className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 text-gray-700"
+                                      className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50 flex items-center gap-3 text-gray-700"
                                       onClick={(e) => {
                                         e.stopPropagation();
                                         setActionMenuId(null);
@@ -1163,20 +1166,20 @@ export default function Table() {
                                       }}
                                     >
                                       <Pencil size={16} className="text-gray-600" />
-                                      Edit COI
+                                      <span>Edit COI</span>
                                     </button>
                                     <button
-                                      className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 text-red-600"
+                                      className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50 flex items-center gap-3 text-red-600"
                                       onClick={(e) => {
                                         e.stopPropagation();
                                         handleDeleteCOI(item.id);
                                       }}
                                     >
                                       <Trash2 size={16} />
-                                      Delete COI
+                                      <span>Delete COI</span>
                                     </button>
                                     <button
-                                      className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center gap-2 text-gray-700"
+                                      className="w-full px-4 py-3 text-left text-sm hover:bg-gray-50 flex items-center gap-3 text-gray-700"
                                       onClick={(e) => {
                                         e.stopPropagation();
                                         setActionMenuId(null);
@@ -1185,7 +1188,7 @@ export default function Table() {
                                       disabled={reminderStatus === "Sent" || reminderStatus.includes("Sent")}
                                     >
                                       <Send size={16} />
-                                      Send Reminder
+                                      <span>Send Reminder</span>
                                     </button>
                                   </div>
                                 </>
