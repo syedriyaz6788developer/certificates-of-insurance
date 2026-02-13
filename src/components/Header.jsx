@@ -132,7 +132,7 @@ export default function Header({ setIsOpen, isMobileView, isTabletView }) {
                   onClick={() => setIsBulkReminderOpen(false)}
                 />
                 <div className="absolute right-0 mt-2 w-full bg-white border rounded-lg shadow-lg py-2 z-[999]">
-                  {["United States", "Canada", "France", "Germany"].map(
+                  {["Expiring soon", "Expired", "Missing documents", "Active"].map(
                     (country) => (
                       <button
                         key={country}

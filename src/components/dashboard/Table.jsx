@@ -37,11 +37,11 @@ import {
 import toast from "react-hot-toast";
 
 const STATUS_CONFIG = {
-  "Active": { bg: "#DBEAFE", text: "#1E40AF", border: "#BFDBFE" },
-  "Expired": { bg: "#FEE2E2", text: "#991B1B", border: "#FECACA" },
-  "Rejected": { bg: "#FEE2E2", text: "#991B1B", border: "#FECACA" },
-  "Expiring Soon": { bg: "#FFEDD5", text: "#9A3412", border: "#FED7AA" },
-  "Not Processed": { bg: "#EFF6FF", text: "#2563EB", border: "#BFDBFE" }
+  "Active": { bg: "#DBEAFE", text: "#1E40AF", border: "#9EC3FF" },
+  "Expired": { bg: "#FEEEEA", text: "#E04C24", border: "#F98C6F" },
+  "Rejected": { bg: "#FDF4F7", text: "#FF3535", border: "#FBE0B7" },
+  "Expiring Soon": { bg: "#FEF7EC", text: "#B7720B", border: "#FBE0B7" },
+  "Not Processed": { bg: "#F9FAFA", text: "#4F5857", border: "#ADB1B1" }
 };
 
 const STATUS_OPTIONS = [
