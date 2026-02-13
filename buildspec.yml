@@ -1,3 +1,4 @@
+# E:\coi\certificate_of_insurance_coi\buildspec.yml
 version: 0.2
 
 phases:
@@ -12,6 +13,7 @@ phases:
     commands:
       - echo Building the React app...
       - npm run build
+
 
 artifacts:
   files:
