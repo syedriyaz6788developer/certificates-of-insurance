@@ -14,7 +14,6 @@ function IconButton({ icon, children, className = "", ...props }) {
   );
 }
 
-
 export default function Header({ setIsOpen, isMobileView, isTabletView }) {
   const [isBulkReminderOpen, setIsBulkReminderOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
