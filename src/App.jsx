@@ -11,6 +11,7 @@ import { Toaster } from "react-hot-toast";
 
 export default function App() {
   return (
+    
     <Provider store={store}>
       <BrowserRouter>
         <Toaster position="top-right" />
