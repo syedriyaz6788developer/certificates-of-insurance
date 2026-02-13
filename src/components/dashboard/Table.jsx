@@ -1030,7 +1030,20 @@ export default function Table() {
                     <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[120px]">Tenant Name</th>
                     <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[80px]">Unit</th>
                     <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[120px]">COI Name</th>
-                    <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[120px]">Expiry Date</th>
+<th className="px-4 py-3 min-w-[120px]">
+  <div className="flex items-center ">
+    
+    <span className="font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D]">
+      Expiry Date
+    </span>
+
+    <div className="flex flex-col ml-3">
+      <span className="text-[10px] leading-none cursor-pointer text-[#666E6D]">▲</span>
+      <span className="text-[10px] leading-none cursor-pointer text-[#666E6D]">▼</span>
+    </div>
+
+  </div>
+</th>
                     <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[150px]">Status</th>
                     <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[140px]">Reminder status</th>
                     <th className="px-4 py-3 font-inter-display font-medium text-[12px] leading-[24px] tracking-normal text-[#666E6D] min-w-[80px] sticky right-0 bg-[#eff1f1] z-10">Action</th>
